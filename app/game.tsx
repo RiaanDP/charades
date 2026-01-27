@@ -18,7 +18,7 @@ export default function GameScreen() {
     if (categoryId) {
       const categoryCards = getCardsByCategory(categoryId);
       const shuffled = shuffleCards(categoryCards);
-      setCards(shuffled);
+      setCards(shuffled.slice(0, 10));
     }
   }, [categoryId]);
 
@@ -42,7 +42,7 @@ export default function GameScreen() {
   const handlePlayAgain = () => {
     const categoryCards = getCardsByCategory(categoryId as string);
     const shuffled = shuffleCards(categoryCards);
-    setCards(shuffled);
+    setCards(shuffled.slice(0, 10));
     setCurrentCardIndex(0);
     setScore(0);
     setGameOver(false);
