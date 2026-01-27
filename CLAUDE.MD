@@ -36,12 +36,14 @@ A mobile charades game where players act out words/phrases while teammates guess
 - **UI**: React Native 0.81.5
 - **Animations**: React Native Reanimated 4.1.1
 - **Gestures**: React Native Gesture Handler 2.28.0
+- **Orientation**: Expo Screen Orientation (for landscape lock)
 
 ## Current State
 The app now has a functional gameplay flow:
-- Category selection screen as the main landing page
+- Category selection screen as the main landing page (portrait mode)
 - Single "Animals" category available with 50 animal cards
-- Gameplay screen with card display (10 cards per game)
+- Gameplay screen with card display (10 cards per game, landscape mode)
+- Landscape orientation lock on game screen
 - Score tracking and game over screen
 - Tab-based navigation structure exists (only home tab in use)
 - Basic themed components (ThemedView, ThemedText)
@@ -93,15 +95,18 @@ interface Card {
 ## Implementation Progress
 
 ### Completed
-- ✅ Category selection landing page
+- ✅ Category selection landing page (portrait)
 - ✅ Category data structure (Animals category)
 - ✅ 50 animal cards with shuffle functionality
-- ✅ Gameplay screen with card display
+- ✅ Gameplay screen with card display (landscape mode)
+- ✅ Landscape orientation lock for game screen
 - ✅ "Correct" and "Skip" buttons for navigation
 - ✅ Score tracking (correct answers counted)
 - ✅ Game over screen with final score and percentage
 - ✅ Play again functionality (reshuffles cards)
 - ✅ Navigation flow: Categories → Game → Game Over
+- ✅ Hidden navigation header on game screen
+- ✅ Optimized layout for landscape orientation
 
 ### In Progress
 - None
@@ -128,9 +133,15 @@ interface Card {
 - Theme system (ThemedView, ThemedText) provides dark/light mode support
 - Building features incrementally - one category, one feature at a time
 
+## Orientation Handling
+- **Category selection**: Portrait mode (default)
+- **Game screen**: Locked to landscape orientation using `expo-screen-orientation`
+- Orientation automatically unlocks when user leaves game screen
+- Layout optimized for landscape with reduced margins and compact card design
+
 ## Current Gameplay Flow
-1. User opens app → Category selection screen
-2. User taps "Animals" → Game screen with 10 shuffled cards
+1. User opens app → Category selection screen (portrait)
+2. User taps "Animals" → Screen rotates to landscape, game starts with 10 shuffled cards
 3. User presses "Correct" (adds point) or "Skip" (no point)
-4. After 10 cards → Game over screen with score
-5. User can "Play Again" (new 10 cards) or "Back to Categories"
+4. After 10 cards → Game over screen with score (landscape)
+5. User can "Play Again" (new 10 cards) or "Back to Categories" (returns to portrait)
