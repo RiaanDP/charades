@@ -1,8 +1,8 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { CATEGORIES } from '@/constants/categories';
+import { useRouter } from 'expo-router';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: 'bold',
     marginBottom: 8,
+    padding: 5,
   },
   subtitle: {
     fontSize: 16,

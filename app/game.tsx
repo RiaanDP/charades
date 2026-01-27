@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import * as ScreenOrientation from 'expo-screen-orientation';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { getCardsByCategory, shuffleCards, Card } from '@/constants/cards';
+import { Card, getCardsByCategory, shuffleCards } from '@/constants/cards';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function GameScreen() {
   useEffect(() => {
@@ -16,6 +16,16 @@ export default function GameScreen() {
       ScreenOrientation.unlockAsync();
     };
   }, []);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <GameContent />
+    </View>
+  );
+}
+
+function GameContent() {
   const { categoryId } = useLocalSearchParams<{ categoryId: string }>();
   const router = useRouter();
 
@@ -136,6 +146,7 @@ export default function GameScreen() {
           <ThemedText style={styles.buttonText}>Correct</ThemedText>
         </TouchableOpacity>
       </View>
+
     </ThemedView>
   );
 }
@@ -143,14 +154,15 @@ export default function GameScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 60,
-    marginBottom: 20,
+    marginTop: 10,
+    marginBottom: 0,
+    paddingHorizontal: 10,
   },
   cardCounter: {
     fontSize: 18,
@@ -164,15 +176,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 5,
   },
   card: {
     width: '100%',
+    height: '100%',
+    maxHeight: 400,
     backgroundColor: '#007AFF',
     borderRadius: 20,
-    padding: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: 300,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -184,12 +197,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
+    lineHeight: 60,
+    includeFontPadding: false,
   },
   controls: {
     flexDirection: 'row',
     gap: 16,
-    marginTop: 40,
-    marginBottom: 40,
+    marginTop: 10,
+    marginBottom: 16,
   },
   button: {
     flex: 1,
@@ -217,15 +232,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 40,
+    gap: 20,
   },
   gameOverTitle: {
     fontSize: 48,
     fontWeight: 'bold',
+    marginTop: 20,
+    padding: 10,
   },
   scoreContainer: {
     alignItems: 'center',
-    gap: 16,
+    gap: 5,
   },
   scoreLabel: {
     fontSize: 24,
@@ -234,6 +251,7 @@ const styles = StyleSheet.create({
   finalScore: {
     fontSize: 64,
     fontWeight: 'bold',
+    lineHeight: 60,
   },
   percentage: {
     fontSize: 32,
@@ -242,6 +260,7 @@ const styles = StyleSheet.create({
   gameOverButtons: {
     width: '100%',
     gap: 16,
+    flexDirection: 'row',
   },
   playAgainButton: {
     backgroundColor: '#007AFF',
