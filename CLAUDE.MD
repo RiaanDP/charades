@@ -38,9 +38,11 @@ A mobile charades game where players act out words/phrases while teammates guess
 - **Gestures**: React Native Gesture Handler 2.28.0
 
 ## Current State
-The app now has a functional category selection landing page:
+The app now has a functional gameplay flow:
 - Category selection screen as the main landing page
-- Single "Animals" category available (50 cards)
+- Single "Animals" category available with 50 animal cards
+- Gameplay screen with card display (10 cards per game)
+- Score tracking and game over screen
 - Tab-based navigation structure exists (only home tab in use)
 - Basic themed components (ThemedView, ThemedText)
 - Dark/light theme support
@@ -53,6 +55,7 @@ charades/
 │   │   ├── index.tsx        # Category selection screen (landing page)
 │   │   ├── explore.tsx      # Explore tab (unused)
 │   │   └── _layout.tsx      # Tab layout
+│   ├── game.tsx             # Gameplay screen with card display
 │   ├── _layout.tsx          # Root layout
 │   └── modal.tsx            # Example modal
 ├── components/              # Reusable components
@@ -60,6 +63,7 @@ charades/
 │   └── themed-*.tsx         # Theme-aware components
 ├── constants/               # App constants
 │   ├── categories.ts        # Category definitions
+│   ├── cards.ts             # Card data and utilities (50 animals)
 │   └── theme.ts            # Theme configuration
 └── hooks/                  # Custom React hooks
     └── use-*.ts            # Theme and color scheme hooks
@@ -77,22 +81,36 @@ interface Category {
 }
 ```
 
+### Card
+```typescript
+interface Card {
+  id: string;
+  text: string;
+  categoryId: string;
+}
+```
+
 ## Implementation Progress
 
 ### Completed
 - ✅ Category selection landing page
-- ✅ Category data structure (Animals category with 50 cards)
+- ✅ Category data structure (Animals category)
+- ✅ 50 animal cards with shuffle functionality
+- ✅ Gameplay screen with card display
+- ✅ "Correct" and "Skip" buttons for navigation
+- ✅ Score tracking (correct answers counted)
+- ✅ Game over screen with final score and percentage
+- ✅ Play again functionality (reshuffles cards)
+- ✅ Navigation flow: Categories → Game → Game Over
 
 ### In Progress
 - None
 
 ### Todo
-- Game setup screen (timer selection, player management)
-- Gameplay screen with card display
+- Timer functionality (30s/60s/90s options)
 - Tilt gesture detection (up = correct, down = skip)
-- Timer functionality
-- Score tracking
-- Animal category card content (50+ animal names)
+- Game setup screen (timer selection, player management)
+- Additional categories
 
 ## Development Scripts
 - `npm start` - Start Expo development server
@@ -102,8 +120,17 @@ interface Category {
 - `npm run lint` - Run ESLint
 
 ## Development Notes
-- Using Expo Router for file-based navigation
+- Using Expo Router for file-based navigation with query params
 - Tab navigation structure exists but only home tab is actively used
-- Category selection uses TouchableOpacity with console logging (ready for navigation hookup)
+- Game displays 10 randomly selected cards per round (from 50 available)
+- Cards are shuffled using Fisher-Yates algorithm
+- Score tracking counts only "Correct" button presses, not skips
 - Theme system (ThemedView, ThemedText) provides dark/light mode support
 - Building features incrementally - one category, one feature at a time
+
+## Current Gameplay Flow
+1. User opens app → Category selection screen
+2. User taps "Animals" → Game screen with 10 shuffled cards
+3. User presses "Correct" (adds point) or "Skip" (no point)
+4. After 10 cards → Game over screen with score
+5. User can "Play Again" (new 10 cards) or "Back to Categories"
