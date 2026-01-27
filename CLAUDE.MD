@@ -30,10 +30,13 @@ A mobile charades game where players act out words/phrases while teammates guess
 
 ## Key Implementation Details
 
-Accelerometer Gestures
-- Tilt up > 30° = Mark correct, show next card
-- Tilt down < -30° = Skip card
-- Debounce: 500ms between gestures to prevent accidental triggers
+### Accelerometer Gestures (Heads Up Style)
+The phone is held vertically in landscape mode against the player's forehead with the screen facing outward:
+- **Tilt backward** (top edge away from face, z > 0.7) = Mark correct, show next card
+- **Tilt forward** (top edge toward face, z < -0.7) = Skip card
+- **Debounce**: 1000ms (1 second) between gestures to prevent accidental triggers
+- Uses z-axis of accelerometer for tilt detection
+- When held vertical against forehead: z ≈ 0
 
 ## Tech Stack
 - **Framework**: Expo SDK 54
@@ -44,13 +47,15 @@ Accelerometer Gestures
 - **Animations**: React Native Reanimated 4.1.1
 - **Gestures**: React Native Gesture Handler 2.28.0
 - **Orientation**: Expo Screen Orientation (for landscape lock)
+- **Sensors**: Expo Sensors (accelerometer for tilt detection)
 
 ## Current State
-The app now has a functional gameplay flow:
+The app now has a fully functional "Heads Up" style gameplay:
 - Category selection screen as the main landing page (portrait mode)
 - Single "Animals" category available with 50 animal cards
 - Gameplay screen with card display (10 cards per game, landscape mode)
 - Landscape orientation lock on game screen
+- Accelerometer-based tilt gestures (backward = correct, forward = skip)
 - Score tracking and game over screen
 - Tab-based navigation structure exists (only home tab in use)
 - Basic themed components (ThemedView, ThemedText)
@@ -107,7 +112,8 @@ interface Card {
 - ✅ 50 animal cards with shuffle functionality
 - ✅ Gameplay screen with card display (landscape mode)
 - ✅ Landscape orientation lock for game screen
-- ✅ "Correct" and "Skip" buttons for navigation
+- ✅ Accelerometer tilt gesture detection (backward = correct, forward = skip)
+- ✅ 1 second debounce on tilt gestures
 - ✅ Score tracking (correct answers counted)
 - ✅ Game over screen with final score and percentage
 - ✅ Play again functionality (reshuffles cards)
@@ -120,9 +126,9 @@ interface Card {
 
 ### Todo
 - Timer functionality (30s/60s/90s options)
-- Tilt gesture detection (up = correct, down = skip)
 - Game setup screen (timer selection, player management)
 - Additional categories
+- Remove debug Z-axis display from production
 
 ## Development Scripts
 - `npm start` - Start Expo development server
@@ -136,9 +142,11 @@ interface Card {
 - Tab navigation structure exists but only home tab is actively used
 - Game displays 10 randomly selected cards per round (from 50 available)
 - Cards are shuffled using Fisher-Yates algorithm
-- Score tracking counts only "Correct" button presses, not skips
+- Score tracking counts only tilt backward gestures (correct), not tilt forward (skip)
+- Accelerometer updates every 100ms for responsive tilt detection
 - Theme system (ThemedView, ThemedText) provides dark/light mode support
 - Building features incrementally - one category, one feature at a time
+- Tilt gestures only work on physical devices with accelerometers (not web or some emulators)
 
 ## Orientation Handling
 - **Category selection**: Portrait mode (default)
@@ -149,6 +157,8 @@ interface Card {
 ## Current Gameplay Flow
 1. User opens app → Category selection screen (portrait)
 2. User taps "Animals" → Screen rotates to landscape, game starts with 10 shuffled cards
-3. User presses "Correct" (adds point) or "Skip" (no point)
-4. After 10 cards → Game over screen with score (landscape)
-5. User can "Play Again" (new 10 cards) or "Back to Categories" (returns to portrait)
+3. User holds phone vertically against forehead (Heads Up style) with screen facing outward
+4. User tilts backward (away from face) = Correct (adds point, next card)
+5. User tilts forward (toward face) = Skip (no point, next card)
+6. After 10 cards → Game over screen with score (landscape)
+7. User can "Play Again" (new 10 cards) or "Back to Categories" (returns to portrait)
