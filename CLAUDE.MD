@@ -3,6 +3,30 @@
 ## Project Overview
 A mobile charades game built with React Native and Expo. The app is being developed incrementally with features added step-by-step.
 
+## Project Description
+A mobile charades game where players act out words/phrases while teammates guess. Think "Heads Up" style gameplay with custom content creation.
+
+## Core Features
+
+### MVP (Version 1.0)
+
+1. Basic Gameplay
+ - Display cards one at a time
+ - Tilt phone up = correct (next card)
+ - Tilt phone down = skip
+ - Countdown timer (30s/60s/90s options)
+ - Score tracking
+
+2. Bundled Content
+ - 5-10 pre-made categories (Movies, TV Shows, Actions, etc.)
+ - 50+ cards per category
+ - Text-only cards initially
+
+3. Game Setup
+ - Select category
+ - Choose timer duration
+ - Add players
+
 ## Tech Stack
 - **Framework**: Expo SDK 54
 - **Runtime**: React 19.1.0
@@ -47,7 +71,7 @@ charades/
 - `npm run lint` - Run ESLint
 
 ## Features to Build
-The app will be built incrementally. Features will be added one at a time as guided by the developer.
+The app will be built incrementally. Features will be added one at a time, incrementally as guided by the developer.
 
 ## Development Notes
 - Using Expo Router for file-based navigation
