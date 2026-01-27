@@ -34,10 +34,12 @@ function GameContent() {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [flashColor, setFlashColor] = useState<string | null>(null);
 
   const isInNeutral = useRef(true);
   const TILT_THRESHOLD = 0.7;
   const NEUTRAL_THRESHOLD = 0.3;
+  const FLASH_DURATION = 300;
 
   useEffect(() => {
     if (categoryId) {
@@ -81,16 +83,25 @@ function GameContent() {
       if (z > TILT_THRESHOLD) {
         // Tilted backward (top edge away from face) - Mark correct
         isInNeutral.current = false;
+        triggerFlash('#34C759'); // Green flash
         handleCorrect();
       } else if (z < -TILT_THRESHOLD) {
         // Tilted forward (top edge toward face) - Skip
         isInNeutral.current = false;
+        triggerFlash('#FF9500'); // Orange flash
         handleSkip();
       }
     });
 
     return () => subscription.remove();
   }, [currentCardIndex, score, cards.length, gameOver]);
+
+  const triggerFlash = (color: string) => {
+    setFlashColor(color);
+    setTimeout(() => {
+      setFlashColor(null);
+    }, FLASH_DURATION);
+  };
 
   const handleCorrect = () => {
     setScore(score + 1);
@@ -177,7 +188,10 @@ function GameContent() {
       </View>
 
       <View style={styles.cardContainer}>
-        <View style={styles.card}>
+        <View style={[
+          styles.card,
+          flashColor && { backgroundColor: flashColor }
+        ]}>
           <ThemedText style={styles.cardText}>{currentCard.text}</ThemedText>
         </View>
       </View>
