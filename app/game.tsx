@@ -3,6 +3,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Card, getCardsByCategory, shuffleCards } from '@/constants/cards';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import * as Haptics from 'expo-haptics';
 import { Accelerometer } from 'expo-sensors';
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -84,11 +85,13 @@ function GameContent() {
         // Tilted backward (top edge away from face) - Mark correct
         isInNeutral.current = false;
         triggerFlash('#34C759'); // Green flash
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         handleCorrect();
       } else if (z < -TILT_THRESHOLD) {
         // Tilted forward (top edge toward face) - Skip
         isInNeutral.current = false;
         triggerFlash('#FF9500'); // Orange flash
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         handleSkip();
       }
     });
