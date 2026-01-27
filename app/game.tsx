@@ -35,8 +35,9 @@ function GameContent() {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
 
-  const lastGestureTime = useRef(0);
-  const DEBOUNCE_MS = 1000;
+  const isInNeutral = useRef(true);
+  const TILT_THRESHOLD = 0.7;
+  const NEUTRAL_THRESHOLD = 0.3;
 
   useEffect(() => {
     if (categoryId) {
@@ -53,12 +54,6 @@ function GameContent() {
     Accelerometer.setUpdateInterval(100);
 
     const subscription = Accelerometer.addListener(({ x, y, z }) => {
-
-      const now = Date.now();
-      if (now - lastGestureTime.current < DEBOUNCE_MS) {
-        return;
-      }
-
       // Phone held vertically in landscape mode against forehead:
       // - Long edge is horizontal (top and bottom)
       // - Screen faces outward
@@ -67,15 +62,29 @@ function GameContent() {
       // Tilt BACKWARD (top edge tilts away from face): z becomes positive
       // Tilt FORWARD (top edge tilts toward face): z becomes negative
       //
-      // We detect the change in z-axis from the vertical position
+      // State machine approach:
+      // 1. User must be in neutral position (|z| < 0.3) before gesture is recognized
+      // 2. Once tilted beyond threshold, action triggers
+      // 3. User must return to neutral before next action can trigger
 
-      if (z > 0.7) {
+      // Check if in neutral position
+      if (Math.abs(z) < NEUTRAL_THRESHOLD) {
+        isInNeutral.current = true;
+        return;
+      }
+
+      // Only recognize gestures if we were previously in neutral
+      if (!isInNeutral.current) {
+        return;
+      }
+
+      if (z > TILT_THRESHOLD) {
         // Tilted backward (top edge away from face) - Mark correct
-        lastGestureTime.current = now;
+        isInNeutral.current = false;
         handleCorrect();
-      } else if (z < -0.7) {
+      } else if (z < -TILT_THRESHOLD) {
         // Tilted forward (top edge toward face) - Skip
-        lastGestureTime.current = now;
+        isInNeutral.current = false;
         handleSkip();
       }
     });
