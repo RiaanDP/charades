@@ -62,16 +62,12 @@ function GameContent() {
       // Phone held vertically in landscape mode against forehead:
       // - Long edge is horizontal (top and bottom)
       // - Screen faces outward
-      // - When vertical: z ≈ -1 (screen perpendicular to ground)
+      // - When vertical against forehead: z ≈ 0
       //
-      // Tilt BACKWARD (top edge away from face): z becomes less negative (approaches 0)
-      // Tilt FORWARD (top edge toward face): z becomes more negative (approaches -2 in units)
+      // Tilt BACKWARD (top edge tilts away from face): z becomes positive
+      // Tilt FORWARD (top edge tilts toward face): z becomes negative
       //
       // We detect the change in z-axis from the vertical position
-
-      // When vertical, z ≈ -1
-      // Tilt backward (correct): z increases toward -0.7 or higher
-      // Tilt forward (skip): z decreases toward -1.3 or lower
 
       if (z > 0.7) {
         // Tilted backward (top edge away from face) - Mark correct
