@@ -1,11 +1,21 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { getCardsByCategory, shuffleCards, Card } from '@/constants/cards';
 
 export default function GameScreen() {
+  useEffect(() => {
+    // Lock to landscape orientation when this screen mounts
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+
+    // Unlock orientation when component unmounts
+    return () => {
+      ScreenOrientation.unlockAsync();
+    };
+  }, []);
   const { categoryId } = useLocalSearchParams<{ categoryId: string }>();
   const router = useRouter();
 
