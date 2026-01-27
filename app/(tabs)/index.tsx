@@ -1,9 +1,12 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { CATEGORIES } from '@/constants/categories';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
@@ -17,8 +20,7 @@ export default function HomeScreen() {
             key={category.id}
             style={styles.categoryCard}
             onPress={() => {
-              // TODO: Navigate to game setup
-              console.log('Selected:', category.name);
+              router.push(`/game?categoryId=${category.id}`);
             }}
           >
             <ThemedText type="subtitle" style={styles.categoryName}>
