@@ -34,9 +34,10 @@ A mobile charades game where players act out words/phrases while teammates guess
 The phone is held vertically in landscape mode against the player's forehead with the screen facing outward:
 - **Tilt backward** (top edge away from face, z > 0.7) = Mark correct, show next card
 - **Tilt forward** (top edge toward face, z < -0.7) = Skip card
-- **Debounce**: 1000ms (1 second) between gestures to prevent accidental triggers
+- **Neutral position reset**: User must return phone to upright position (|z| < 0.3) before next gesture is recognized
 - Uses z-axis of accelerometer for tilt detection
 - When held vertical against forehead: z ≈ 0
+- State machine approach prevents accidental multiple triggers without time-based debouncing
 
 ## Tech Stack
 - **Framework**: Expo SDK 54
@@ -113,7 +114,7 @@ interface Card {
 - ✅ Gameplay screen with card display (landscape mode)
 - ✅ Landscape orientation lock for game screen
 - ✅ Accelerometer tilt gesture detection (backward = correct, forward = skip)
-- ✅ 1 second debounce on tilt gestures
+- ✅ Neutral position reset system (must return to upright before next gesture)
 - ✅ Score tracking (correct answers counted)
 - ✅ Game over screen with final score and percentage
 - ✅ Play again functionality (reshuffles cards)
@@ -144,6 +145,8 @@ interface Card {
 - Cards are shuffled using Fisher-Yates algorithm
 - Score tracking counts only tilt backward gestures (correct), not tilt forward (skip)
 - Accelerometer updates every 100ms for responsive tilt detection
+- Gesture recognition uses state machine: neutral → tilted → back to neutral (no time-based debouncing)
+- Thresholds: Neutral zone |z| < 0.3, Action triggers at |z| > 0.7
 - Theme system (ThemedView, ThemedText) provides dark/light mode support
 - Building features incrementally - one category, one feature at a time
 - Tilt gestures only work on physical devices with accelerometers (not web or some emulators)
@@ -159,6 +162,8 @@ interface Card {
 2. User taps "Animals" → Screen rotates to landscape, game starts with 10 shuffled cards
 3. User holds phone vertically against forehead (Heads Up style) with screen facing outward
 4. User tilts backward (away from face) = Correct (adds point, next card)
-5. User tilts forward (toward face) = Skip (no point, next card)
-6. After 10 cards → Game over screen with score (landscape)
-7. User can "Play Again" (new 10 cards) or "Back to Categories" (returns to portrait)
+5. User returns phone to upright/neutral position
+6. User tilts forward (toward face) = Skip (no point, next card)
+7. User returns phone to upright/neutral position (step 5 repeats)
+8. After 10 cards → Game over screen with score (landscape)
+9. User can "Play Again" (new 10 cards) or "Back to Categories" (returns to portrait)
