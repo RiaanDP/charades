@@ -39,16 +39,29 @@ The phone is held vertically in landscape mode against the player's forehead wit
 - When held vertical against forehead: z ≈ 0
 - State machine approach prevents accidental multiple triggers without time-based debouncing
 
+### Visual & Haptic Feedback
+- **Correct gesture**: Card flashes green (#34C759) + success haptic feedback
+- **Skip gesture**: Card flashes orange (#FF9500) + warning haptic feedback
+- Flash duration: 300ms
+- Provides immediate confirmation of gesture recognition
+
+### Immersive Mode
+- Status bar hidden on all platforms
+- Android navigation buttons hidden with overlay-swipe behavior
+- Full-screen gameplay experience
+
 ## Tech Stack
 - **Framework**: Expo SDK 54
 - **Runtime**: React 19.1.0
 - **Language**: TypeScript 5.9.2
-- **Navigation**: Expo Router 6.0.22 with file-based routing
+- **Navigation**: Expo Router 6.0.22 with file-based routing (stack navigation)
 - **UI**: React Native 0.81.5
 - **Animations**: React Native Reanimated 4.1.1
 - **Gestures**: React Native Gesture Handler 2.28.0
 - **Orientation**: Expo Screen Orientation (for landscape lock)
 - **Sensors**: Expo Sensors (accelerometer for tilt detection)
+- **Haptics**: Expo Haptics (for tactile feedback)
+- **Navigation Bar**: Expo Navigation Bar (for immersive mode on Android)
 
 ## Current State
 The app now has a fully functional "Heads Up" style gameplay:
@@ -57,8 +70,11 @@ The app now has a fully functional "Heads Up" style gameplay:
 - Gameplay screen with card display (10 cards per game, landscape mode)
 - Landscape orientation lock on game screen
 - Accelerometer-based tilt gestures (backward = correct, forward = skip)
+- Visual feedback (green flash for correct, orange flash for skip)
+- Haptic feedback (success vibration for correct, warning vibration for skip)
 - Score tracking and game over screen
-- Tab-based navigation structure exists (only home tab in use)
+- Immersive full-screen mode (hidden status bar and navigation buttons)
+- Simple stack navigation (no tabs)
 - Basic themed components (ThemedView, ThemedText)
 - Dark/light theme support
 
@@ -66,13 +82,9 @@ The app now has a fully functional "Heads Up" style gameplay:
 ```
 charades/
 ├── app/                      # Expo Router screens
-│   ├── (tabs)/              # Tab navigation screens
-│   │   ├── index.tsx        # Category selection screen (landing page)
-│   │   ├── explore.tsx      # Explore tab (unused)
-│   │   └── _layout.tsx      # Tab layout
+│   ├── index.tsx            # Category selection screen (landing page)
 │   ├── game.tsx             # Gameplay screen with card display
-│   ├── _layout.tsx          # Root layout
-│   └── modal.tsx            # Example modal
+│   └── _layout.tsx          # Root layout with stack navigation
 ├── components/              # Reusable components
 │   ├── ui/                  # UI primitives
 │   └── themed-*.tsx         # Theme-aware components
@@ -115,11 +127,15 @@ interface Card {
 - ✅ Landscape orientation lock for game screen
 - ✅ Accelerometer tilt gesture detection (backward = correct, forward = skip)
 - ✅ Neutral position reset system (must return to upright before next gesture)
+- ✅ Visual feedback (green/orange flash on gestures)
+- ✅ Haptic feedback (success/warning vibration on gestures)
 - ✅ Score tracking (correct answers counted)
 - ✅ Game over screen with final score and percentage
 - ✅ Play again functionality (reshuffles cards)
 - ✅ Navigation flow: Categories → Game → Game Over
-- ✅ Hidden navigation header on game screen
+- ✅ Hidden navigation header on all screens
+- ✅ Immersive full-screen mode (hidden status bar and nav buttons)
+- ✅ Stack navigation (removed tab bar)
 - ✅ Optimized layout for landscape orientation
 
 ### In Progress
@@ -139,17 +155,19 @@ interface Card {
 - `npm run lint` - Run ESLint
 
 ## Development Notes
-- Using Expo Router for file-based navigation with query params
-- Tab navigation structure exists but only home tab is actively used
+- Using Expo Router for file-based navigation with query params and stack navigation
+- Simple two-screen flow: Landing page → Game screen
 - Game displays 10 randomly selected cards per round (from 50 available)
 - Cards are shuffled using Fisher-Yates algorithm
 - Score tracking counts only tilt backward gestures (correct), not tilt forward (skip)
 - Accelerometer updates every 100ms for responsive tilt detection
 - Gesture recognition uses state machine: neutral → tilted → back to neutral (no time-based debouncing)
 - Thresholds: Neutral zone |z| < 0.3, Action triggers at |z| > 0.7
+- Visual flash (300ms) and haptic feedback provide immediate gesture confirmation
+- Immersive mode configured in root layout (_layout.tsx)
 - Theme system (ThemedView, ThemedText) provides dark/light mode support
 - Building features incrementally - one category, one feature at a time
-- Tilt gestures only work on physical devices with accelerometers (not web or some emulators)
+- Tilt gestures and haptics only work on physical devices (not web or some emulators)
 
 ## Orientation Handling
 - **Category selection**: Portrait mode (default)
