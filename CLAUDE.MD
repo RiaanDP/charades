@@ -28,6 +28,13 @@ A mobile charades game where players act out words/phrases while teammates guess
  - Choose timer duration
  - Add players
 
+## Key Implementation Details
+
+Accelerometer Gestures
+- Tilt up > 30° = Mark correct, show next card
+- Tilt down < -30° = Skip card
+- Debounce: 500ms between gestures to prevent accidental triggers
+
 ## Tech Stack
 - **Framework**: Expo SDK 54
 - **Runtime**: React 19.1.0
