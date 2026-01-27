@@ -3,7 +3,8 @@ import { ThemedView } from '@/components/themed-view';
 import { Card, getCardsByCategory, shuffleCards } from '@/constants/cards';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { useEffect, useState } from 'react';
+import { Accelerometer } from 'expo-sensors';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function GameScreen() {
@@ -34,6 +35,9 @@ function GameContent() {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
 
+  const lastGestureTime = useRef(0);
+  const DEBOUNCE_MS = 1000;
+
   useEffect(() => {
     if (categoryId) {
       const categoryCards = getCardsByCategory(categoryId);
@@ -41,6 +45,47 @@ function GameContent() {
       setCards(shuffled.slice(0, 10));
     }
   }, [categoryId]);
+
+  // Accelerometer tilt detection
+  useEffect(() => {
+    if (gameOver) return;
+
+    Accelerometer.setUpdateInterval(100);
+
+    const subscription = Accelerometer.addListener(({ x, y, z }) => {
+
+      const now = Date.now();
+      if (now - lastGestureTime.current < DEBOUNCE_MS) {
+        return;
+      }
+
+      // Phone held vertically in landscape mode against forehead:
+      // - Long edge is horizontal (top and bottom)
+      // - Screen faces outward
+      // - When vertical: z ≈ -1 (screen perpendicular to ground)
+      //
+      // Tilt BACKWARD (top edge away from face): z becomes less negative (approaches 0)
+      // Tilt FORWARD (top edge toward face): z becomes more negative (approaches -2 in units)
+      //
+      // We detect the change in z-axis from the vertical position
+
+      // When vertical, z ≈ -1
+      // Tilt backward (correct): z increases toward -0.7 or higher
+      // Tilt forward (skip): z decreases toward -1.3 or lower
+
+      if (z > 0.7) {
+        // Tilted backward (top edge away from face) - Mark correct
+        lastGestureTime.current = now;
+        handleCorrect();
+      } else if (z < -0.7) {
+        // Tilted forward (top edge toward face) - Skip
+        lastGestureTime.current = now;
+        handleSkip();
+      }
+    });
+
+    return () => subscription.remove();
+  }, [currentCardIndex, score, cards.length, gameOver]);
 
   const handleCorrect = () => {
     setScore(score + 1);
@@ -132,21 +177,6 @@ function GameContent() {
         </View>
       </View>
 
-      <View style={styles.controls}>
-        <TouchableOpacity
-          style={[styles.button, styles.skipButton]}
-          onPress={handleSkip}
-        >
-          <ThemedText style={styles.buttonText}>Skip</ThemedText>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.correctButton]}
-          onPress={handleCorrect}
-        >
-          <ThemedText style={styles.buttonText}>Correct</ThemedText>
-        </TouchableOpacity>
-      </View>
-
     </ThemedView>
   );
 }
@@ -200,12 +230,6 @@ const styles = StyleSheet.create({
     lineHeight: 60,
     includeFontPadding: false,
   },
-  controls: {
-    flexDirection: 'row',
-    gap: 16,
-    marginTop: 10,
-    marginBottom: 16,
-  },
   button: {
     flex: 1,
     padding: 20,
@@ -216,12 +240,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },
-  skipButton: {
-    backgroundColor: '#FF9500',
-  },
-  correctButton: {
-    backgroundColor: '#34C759',
   },
   buttonText: {
     color: '#FFFFFF',
