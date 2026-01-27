@@ -18,7 +18,8 @@ A mobile charades game where players act out words/phrases while teammates guess
  - Score tracking
 
 2. Bundled Content
- - 5-10 pre-made categories (Movies, TV Shows, Actions, etc.)
+ - Starting with single category (Animals)
+ - Will expand to more categories incrementally
  - 50+ cards per category
  - Text-only cards initially
 
@@ -37,11 +38,11 @@ A mobile charades game where players act out words/phrases while teammates guess
 - **Gestures**: React Native Gesture Handler 2.28.0
 
 ## Current State
-This is a fresh Expo project with the default template structure:
-- Tab-based navigation (`app/(tabs)/`)
-- Default home and explore screens
+The app now has a functional category selection landing page:
+- Category selection screen as the main landing page
+- Single "Animals" category available (50 cards)
+- Tab-based navigation structure exists (only home tab in use)
 - Basic themed components (ThemedView, ThemedText)
-- Example components (HelloWave, Collapsible, ParallaxScrollView)
 - Dark/light theme support
 
 ## Project Structure
@@ -49,8 +50,8 @@ This is a fresh Expo project with the default template structure:
 charades/
 ├── app/                      # Expo Router screens
 │   ├── (tabs)/              # Tab navigation screens
-│   │   ├── index.tsx        # Home tab
-│   │   ├── explore.tsx      # Explore tab
+│   │   ├── index.tsx        # Category selection screen (landing page)
+│   │   ├── explore.tsx      # Explore tab (unused)
 │   │   └── _layout.tsx      # Tab layout
 │   ├── _layout.tsx          # Root layout
 │   └── modal.tsx            # Example modal
@@ -58,10 +59,40 @@ charades/
 │   ├── ui/                  # UI primitives
 │   └── themed-*.tsx         # Theme-aware components
 ├── constants/               # App constants
+│   ├── categories.ts        # Category definitions
 │   └── theme.ts            # Theme configuration
 └── hooks/                  # Custom React hooks
     └── use-*.ts            # Theme and color scheme hooks
 ```
+
+## Data Models
+
+### Category
+```typescript
+interface Category {
+  id: string;
+  name: string;
+  description: string;
+  cardCount: number;
+}
+```
+
+## Implementation Progress
+
+### Completed
+- ✅ Category selection landing page
+- ✅ Category data structure (Animals category with 50 cards)
+
+### In Progress
+- None
+
+### Todo
+- Game setup screen (timer selection, player management)
+- Gameplay screen with card display
+- Tilt gesture detection (up = correct, down = skip)
+- Timer functionality
+- Score tracking
+- Animal category card content (50+ animal names)
 
 ## Development Scripts
 - `npm start` - Start Expo development server
@@ -70,11 +101,9 @@ charades/
 - `npm run web` - Run in web browser
 - `npm run lint` - Run ESLint
 
-## Features to Build
-The app will be built incrementally. Features will be added one at a time, incrementally as guided by the developer.
-
 ## Development Notes
 - Using Expo Router for file-based navigation
-- Tab navigation is already set up in `app/(tabs)/`
-- Default theme system is in place
-- Remove or modify default components as needed when building features
+- Tab navigation structure exists but only home tab is actively used
+- Category selection uses TouchableOpacity with console logging (ready for navigation hookup)
+- Theme system (ThemedView, ThemedText) provides dark/light mode support
+- Building features incrementally - one category, one feature at a time
