@@ -1,9 +1,9 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card, getCardsByCategory, shuffleCards } from '@/constants/cards';
+import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import * as Haptics from 'expo-haptics';
 import { Accelerometer } from 'expo-sensors';
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -36,9 +36,11 @@ function GameContent() {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [flashColor, setFlashColor] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(3);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const isInNeutral = useRef(true);
-  const TILT_THRESHOLD = 0.7;
+  const TILT_THRESHOLD = 0.5;
   const NEUTRAL_THRESHOLD = 0.3;
   const FLASH_DURATION = 300;
 
@@ -50,9 +52,25 @@ function GameContent() {
     }
   }, [categoryId]);
 
+  // Countdown timer
+  useEffect(() => {
+    if (countdown === null) return;
+
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      // Countdown finished
+      setGameStarted(true);
+      setCountdown(null);
+    }
+  }, [countdown]);
+
   // Accelerometer tilt detection
   useEffect(() => {
-    if (gameOver) return;
+    if (gameOver || !gameStarted) return;
 
     Accelerometer.setUpdateInterval(100);
 
@@ -97,7 +115,7 @@ function GameContent() {
     });
 
     return () => subscription.remove();
-  }, [currentCardIndex, score, cards.length, gameOver]);
+  }, [currentCardIndex, score, cards.length, gameOver, gameStarted]);
 
   const triggerFlash = (color: string) => {
     setFlashColor(color);
@@ -130,6 +148,8 @@ function GameContent() {
     setCurrentCardIndex(0);
     setScore(0);
     setGameOver(false);
+    setGameStarted(false);
+    setCountdown(3);
   };
 
   const handleBackToCategories = () => {
@@ -174,6 +194,17 @@ function GameContent() {
               <ThemedText style={styles.buttonText}>Back to Categories</ThemedText>
             </TouchableOpacity>
           </View>
+        </View>
+      </ThemedView>
+    );
+  }
+
+  // Show countdown before game starts
+  if (countdown !== null && countdown > 0) {
+    return (
+      <ThemedView style={styles.container}>
+        <View style={styles.countdownContainer}>
+          <ThemedText style={styles.countdownText}>{countdown}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -224,11 +255,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+  countdownContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+  },
+  countdownText: {
+    fontSize: 120,
+    fontWeight: 'bold',
+    lineHeight: 130,
+  },
   cardContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 5,
+    paddingTop: 5,
   },
   card: {
     width: '100%',
