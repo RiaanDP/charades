@@ -3,3 +3,11 @@ repos:
     rev: v8.18.2
     hooks:
       - id: gitleaks
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: npx eslint
+        language: system
+        files: \.[jt]sx?$
+        args: ['--max-warnings=0']
