@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Accelerometer } from 'expo-sensors';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function GameScreen() {
@@ -115,7 +115,7 @@ function GameContent() {
     });
 
     return () => subscription.remove();
-  }, [currentCardIndex, score, cards.length, gameOver, gameStarted]);
+  }, [currentCardIndex, score, cards.length, gameOver, gameStarted, handleCorrect, handleSkip]);
 
   const triggerFlash = (color: string) => {
     setFlashColor(color);
@@ -124,22 +124,22 @@ function GameContent() {
     }, FLASH_DURATION);
   };
 
-  const handleCorrect = () => {
-    setScore(score + 1);
-    moveToNextCard();
-  };
-
-  const handleSkip = () => {
-    moveToNextCard();
-  };
-
-  const moveToNextCard = () => {
+  const moveToNextCard = useCallback(() => {
     if (currentCardIndex < cards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
     } else {
       setGameOver(true);
     }
-  };
+  }, [currentCardIndex, cards.length]);
+
+  const handleCorrect = useCallback(() => {
+    setScore(score + 1);
+    moveToNextCard();
+  }, [score, moveToNextCard]);
+
+  const handleSkip = useCallback(() => {
+    moveToNextCard();
+  }, [moveToNextCard]);
 
   const handlePlayAgain = () => {
     const categoryCards = getCardsByCategory(categoryId as string);
@@ -260,6 +260,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 5,
+    backgroundColor: '#FF9500',
   },
   countdownText: {
     fontSize: 120,
