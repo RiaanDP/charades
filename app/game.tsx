@@ -68,6 +68,23 @@ function GameContent() {
     }
   }, [countdown]);
 
+    const moveToNextCard = useCallback(() => {
+    if (currentCardIndex < cards.length - 1) {
+      setCurrentCardIndex(currentCardIndex + 1);
+    } else {
+      setGameOver(true);
+    }
+  }, [currentCardIndex, cards.length]);
+
+  const handleCorrect = useCallback(() => {
+    setScore(score + 1);
+    moveToNextCard();
+  }, [score, moveToNextCard]);
+
+  const handleSkip = useCallback(() => {
+    moveToNextCard();
+  }, [moveToNextCard]);
+
   // Accelerometer tilt detection
   useEffect(() => {
     if (gameOver || !gameStarted) return;
@@ -123,23 +140,6 @@ function GameContent() {
       setFlashColor(null);
     }, FLASH_DURATION);
   };
-
-  const moveToNextCard = useCallback(() => {
-    if (currentCardIndex < cards.length - 1) {
-      setCurrentCardIndex(currentCardIndex + 1);
-    } else {
-      setGameOver(true);
-    }
-  }, [currentCardIndex, cards.length]);
-
-  const handleCorrect = useCallback(() => {
-    setScore(score + 1);
-    moveToNextCard();
-  }, [score, moveToNextCard]);
-
-  const handleSkip = useCallback(() => {
-    moveToNextCard();
-  }, [moveToNextCard]);
 
   const handlePlayAgain = () => {
     const categoryCards = getCardsByCategory(categoryId as string);
