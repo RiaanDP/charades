@@ -39,6 +39,13 @@ The phone is held vertically in landscape mode against the player's forehead wit
 - When held vertical against forehead: z ≈ 0
 - State machine approach prevents accidental multiple triggers without time-based debouncing
 
+### Countdown Timer
+- 3-second countdown (3, 2, 1) before game starts
+- Large centered display (fontSize: 120)
+- Gives players time to prepare before first card
+- Accelerometer gestures disabled during countdown
+- Countdown resets when "Play Again" is pressed
+
 ### Visual & Haptic Feedback
 - **Correct gesture**: Card flashes green (#34C759) + success haptic feedback
 - **Skip gesture**: Card flashes orange (#FF9500) + warning haptic feedback
@@ -67,6 +74,7 @@ The phone is held vertically in landscape mode against the player's forehead wit
 The app now has a fully functional "Heads Up" style gameplay:
 - Category selection screen as the main landing page (portrait mode)
 - Single "Animals" category available with 50 animal cards
+- 3-second countdown before gameplay begins
 - Gameplay screen with card display (10 cards per game, landscape mode)
 - Landscape orientation lock on game screen
 - Accelerometer-based tilt gestures (backward = correct, forward = skip)
@@ -123,7 +131,8 @@ interface Card {
 - ✅ Category selection landing page (portrait)
 - ✅ Category data structure (Animals category)
 - ✅ 50 animal cards with shuffle functionality
-- ✅ Gameplay screen with card display (landscape mode)
+- ✅ 3-second countdown before game starts
+- ✅ Gameplay screen with card display (10 cards per game, landscape mode)
 - ✅ Landscape orientation lock for game screen
 - ✅ Accelerometer tilt gesture detection (backward = correct, forward = skip)
 - ✅ Neutral position reset system (must return to upright before next gesture)
@@ -131,8 +140,8 @@ interface Card {
 - ✅ Haptic feedback (success/warning vibration on gestures)
 - ✅ Score tracking (correct answers counted)
 - ✅ Game over screen with final score and percentage
-- ✅ Play again functionality (reshuffles cards)
-- ✅ Navigation flow: Categories → Game → Game Over
+- ✅ Play again functionality (reshuffles cards, restarts countdown)
+- ✅ Navigation flow: Categories → Countdown → Game → Game Over
 - ✅ Hidden navigation header on all screens
 - ✅ Immersive full-screen mode (hidden status bar and nav buttons)
 - ✅ Stack navigation (removed tab bar)
@@ -145,7 +154,6 @@ interface Card {
 - Timer functionality (30s/60s/90s options)
 - Game setup screen (timer selection, player management)
 - Additional categories
-- Remove debug Z-axis display from production
 
 ## Development Scripts
 - `npm start` - Start Expo development server
@@ -156,13 +164,15 @@ interface Card {
 
 ## Development Notes
 - Using Expo Router for file-based navigation with query params and stack navigation
-- Simple two-screen flow: Landing page → Game screen
+- Simple two-screen flow: Landing page → Game screen (with countdown)
+- 3-second countdown gives players preparation time before cards appear
 - Game displays 10 randomly selected cards per round (from 50 available)
 - Cards are shuffled using Fisher-Yates algorithm
 - Score tracking counts only tilt backward gestures (correct), not tilt forward (skip)
 - Accelerometer updates every 100ms for responsive tilt detection
+- Accelerometer disabled during countdown to prevent accidental triggers
 - Gesture recognition uses state machine: neutral → tilted → back to neutral (no time-based debouncing)
-- Thresholds: Neutral zone |z| < 0.3, Action triggers at |z| > 0.7
+- Thresholds: Neutral zone |z| < 0.3, Action triggers at |z| > 0.5
 - Visual flash (300ms) and haptic feedback provide immediate gesture confirmation
 - Immersive mode configured in root layout (_layout.tsx)
 - Theme system (ThemedView, ThemedText) provides dark/light mode support
@@ -177,11 +187,13 @@ interface Card {
 
 ## Current Gameplay Flow
 1. User opens app → Category selection screen (portrait)
-2. User taps "Animals" → Screen rotates to landscape, game starts with 10 shuffled cards
-3. User holds phone vertically against forehead (Heads Up style) with screen facing outward
-4. User tilts backward (away from face) = Correct (adds point, next card)
-5. User returns phone to upright/neutral position
-6. User tilts forward (toward face) = Skip (no point, next card)
-7. User returns phone to upright/neutral position (step 5 repeats)
-8. After 10 cards → Game over screen with score (landscape)
-9. User can "Play Again" (new 10 cards) or "Back to Categories" (returns to portrait)
+2. User taps "Animals" → Screen rotates to landscape
+3. 3-second countdown appears (3... 2... 1...)
+4. First card appears, game starts with 10 shuffled cards
+5. User holds phone vertically against forehead (Heads Up style) with screen facing outward
+6. User tilts backward (away from face) = Correct (green flash, haptic feedback, adds point, next card)
+7. User returns phone to upright/neutral position
+8. User tilts forward (toward face) = Skip (orange flash, haptic feedback, no point, next card)
+9. User returns phone to upright/neutral position (steps 6-9 repeat)
+10. After 10 cards → Game over screen with score (landscape)
+11. User can "Play Again" (new 10 cards with countdown) or "Back to Categories" (returns to portrait)
