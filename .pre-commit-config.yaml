@@ -11,3 +11,11 @@ repos:
         language: system
         files: \.[jt]sx?$
         args: ['--max-warnings=0']
+  - repo: local
+    hooks:
+      - id: npm-audit
+        name: npm audit
+        entry: npm audit
+        language: system
+        files: ^package(-lock)?\.json$
+        pass_filenames: false
