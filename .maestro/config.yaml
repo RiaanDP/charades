@@ -1,0 +1,22 @@
+# Maestro E2E Test Configuration for Charades App
+# Learn more: https://maestro.mobile.dev/getting-started/configuration
+
+# NOTE: This uses the default Expo bundle identifier.
+# If you've set a custom bundleIdentifier in app.json (ios.bundleIdentifier or android.package),
+# update this appId to match your actual bundle identifier.
+appId: com.anonymous.charades
+
+name: Charades E2E Tests
+
+# Tags to organize test flows
+includeTags:
+  - automated
+  - smoke
+  - navigation
+
+# Environment variables for test flows
+env:
+  ANIMATION_DELAY: 500      # Short delay for animations
+  TIMEOUT_SHORT: 3000       # 3 second timeout
+  TIMEOUT_MEDIUM: 5000      # 5 second timeout
+  TIMEOUT_LONG: 10000       # 10 second timeout
