@@ -40,10 +40,11 @@ A mobile charades game where players act out words/phrases while teammates guess
    - Score tracking
 
 3. **Bundled Content**
-   - Starting with single category (Animals)
+   - Two categories available:
+     - **Animals**: 50 animal cards
+     - **Family**: 250 family-friendly cards for ages 5+ (objects and actions)
    - Will expand to more categories incrementally
-   - 50+ cards per category
-   - Text-only cards initially
+   - Text-only cards
 
 4. **Game Setup**
    - Select category
@@ -135,8 +136,8 @@ charades/
 │   ├── ui/                  # UI primitives
 │   └── themed-*.tsx         # Theme-aware components
 ├── constants/               # App constants
-│   ├── categories.ts        # Category definitions
-│   ├── cards.ts             # Card data and utilities (50 animals)
+│   ├── categories.ts        # Category definitions (Animals, Family)
+│   ├── cards.ts             # Card data and utilities (50 animals, 250 family)
 │   ├── game-modes.ts        # Game mode definitions and settings
 │   └── theme.ts            # Theme configuration
 └── hooks/                  # Custom React hooks
@@ -173,10 +174,11 @@ interface Card {
 
 ## Development Notes
 - Using Expo Router for file-based navigation with query params and stack navigation
-- Simple two-screen flow: Landing page → Game screen (with countdown)
+- Three-screen flow: Category selection → Setup screen → Game screen (with countdown)
 - 3-second countdown gives players preparation time before cards appear
-- Game displays 10 randomly selected cards per round (from 50 available)
-- Cards are shuffled using Fisher-Yates algorithm
+- Deck size configurable per game mode (5-30 cards depending on mode)
+- Cards randomly selected from category pool and shuffled using Fisher-Yates algorithm
+- Two categories available: Animals (50 cards), Family (250 cards)
 - Score tracking counts only tilt backward gestures (correct), not tilt forward (skip)
 - Accelerometer updates every 100ms for responsive tilt detection
 - Accelerometer disabled during countdown to prevent accidental triggers
