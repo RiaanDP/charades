@@ -40,12 +40,64 @@ The app now has a fully functional "Heads Up" style gameplay:
 - ✅ Optimized layout for landscape orientation
 
 ### In Progress
-- None
+- 🚧 Two Game Modes Feature (8-phase incremental implementation)
 
 ### Todo
-- Timer functionality (30s/60s/90s options)
-- Game setup screen (timer selection, player management)
 - Additional categories
+
+---
+
+## Two Game Modes Implementation Plan
+
+### Overview
+Adding two distinct game modes to the charades app:
+1. **Time Attack Mode**: Get as many correct as possible within a time limit (30s/60s/90s). Can skip cards. Shows "X correct out of Y attempted."
+2. **Speed Run Mode**: Complete all cards as fast as possible. No skipping. 5-minute timeout. Shows total time or timeout message.
+
+### Implementation Phases
+
+#### Phase 1: Add Game Configuration Types and Constants ⏳
+**Status**: Not Started
+**File**: `constants/game-modes.ts` (new)
+**Objective**: Create type-safe foundation with GameMode types, settings interfaces, defaults, and helper functions.
+
+#### Phase 2: Create Setup Screen UI (Non-functional) 📝
+**Status**: Not Started
+**Files**: `app/setup.tsx` (new), `app/_layout.tsx` (modify)
+**Objective**: Build complete setup screen UI with mode selector, settings panels, and navigation buttons.
+
+#### Phase 3: Wire Navigation from Category to Setup 🔗
+**Status**: Not Started
+**Files**: `app/index.tsx`, `app/setup.tsx`
+**Objective**: Connect category selection → setup → game navigation flow with parameter passing.
+
+#### Phase 4: Update Game to Accept New Parameters 🎮
+**Status**: Not Started
+**File**: `app/game.tsx`
+**Objective**: Parse mode, timeLimit, deckSize from URL params with backward compatibility.
+
+#### Phase 5: Implement Timer and Stopwatch Logic ⏱️
+**Status**: Not Started
+**File**: `app/game.tsx`
+**Objective**: Add countdown timer for Time Attack and stopwatch for Speed Run modes.
+
+#### Phase 6: Implement Conditional Skip Behavior ⏭️
+**Status**: Not Started
+**File**: `app/game.tsx`
+**Objective**: Disable forward tilt (skip) gesture for Speed Run mode only.
+
+#### Phase 7: Implement Mode-Specific Game Over Screens 🏆
+**Status**: Not Started
+**File**: `app/game.tsx`
+**Objective**: Show different results based on game mode (score vs time).
+
+#### Phase 8: Fix Play Again and Edge Cases 🔧
+**Status**: Not Started
+**File**: `app/game.tsx`
+**Objective**: Ensure Play Again respects mode/settings, handle app backgrounding and edge cases.
+
+### Full Plan Document
+See `/home/riaan/.claude/plans/groovy-tumbling-giraffe.md` for detailed implementation specifications.
 
 ## Current Gameplay Flow
 
