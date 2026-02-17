@@ -82,8 +82,8 @@ Adding two distinct game modes to the charades app:
 **File**: `app/game.tsx`, `e2e/app.spec.ts`
 **Objective**: Add countdown timer for Time Attack and stopwatch for Speed Run modes.
 
-#### Phase 6: Implement Conditional Skip Behavior ⏭️
-**Status**: Not Started
+#### Phase 6: Implement Conditional Skip Behavior ✅
+**Status**: Completed
 **File**: `app/game.tsx`
 **Objective**: Disable forward tilt (skip) gesture for Speed Run mode only.
 

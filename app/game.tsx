@@ -60,7 +60,6 @@ function GameContent() {
   const FLASH_DURATION = 300;
   const SPEED_RUN_TIMEOUT = 300; // 5 minutes in seconds
 
-  // TODO Phase 6: Disable skip gesture for Speed Run mode
   // TODO Phase 7: Update game over screen based on mode
 
   useEffect(() => {
@@ -189,16 +188,19 @@ function GameContent() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         handleCorrect();
       } else if (z < -TILT_THRESHOLD) {
-        // Tilted forward (top edge toward face) - Skip
-        isInNeutral.current = false;
-        triggerFlash('#FF9500'); // Orange flash
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        handleSkip();
+        // Tilted forward (top edge toward face) - Skip (Time Attack only)
+        if (gameMode === 'time-attack') {
+          isInNeutral.current = false;
+          triggerFlash('#FF9500'); // Orange flash
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          handleSkip();
+        }
+        // Speed Run: forward tilt is ignored (no skip allowed)
       }
     });
 
     return () => subscription.remove();
-  }, [currentCardIndex, score, cards.length, gameOver, gameStarted, handleCorrect, handleSkip]);
+  }, [currentCardIndex, score, cards.length, gameOver, gameStarted, gameMode, handleCorrect, handleSkip]);
 
   const triggerFlash = (color: string) => {
     setFlashColor(color);
