@@ -9,7 +9,8 @@ import {
   getTimeOptions,
 } from '@/constants/game-modes';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function SetupScreen() {
@@ -19,6 +20,16 @@ export default function SetupScreen() {
   const [selectedMode, setSelectedMode] = useState<GameMode>('time-attack');
   const [timeLimit, setTimeLimit] = useState<30 | 60 | 90>(DEFAULT_TIME_ATTACK.timeLimit);
   const [deckSize, setDeckSize] = useState<number>(DEFAULT_TIME_ATTACK.deckSize);
+
+  useEffect(() => {
+    // Lock to portrait orientation when this screen mounts
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+
+    // Unlock orientation when component unmounts
+    return () => {
+      ScreenOrientation.unlockAsync();
+    };
+  }, []);
 
   // Get category name from CATEGORIES
   const category = CATEGORIES.find(cat => cat.id === categoryId);

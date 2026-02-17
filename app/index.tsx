@@ -2,10 +2,22 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { CATEGORIES } from '@/constants/categories';
 import { useRouter } from 'expo-router';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import { useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
+
+  useEffect(() => {
+    // Lock to portrait orientation when this screen mounts
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+
+    // Unlock orientation when component unmounts
+    return () => {
+      ScreenOrientation.unlockAsync();
+    };
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
