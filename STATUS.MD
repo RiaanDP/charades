@@ -38,9 +38,10 @@ The app now has a fully functional "Heads Up" style gameplay:
 - ✅ Immersive full-screen mode (hidden status bar and nav buttons)
 - ✅ Stack navigation (removed tab bar)
 - ✅ Optimized layout for landscape orientation
+- ✅ Two Game Modes Feature (8-phase incremental implementation)
 
 ### In Progress
-- 🚧 Two Game Modes Feature (8-phase incremental implementation)
+- None
 
 ### Todo
 - Additional categories
@@ -92,8 +93,8 @@ Adding two distinct game modes to the charades app:
 **File**: `app/game.tsx`
 **Objective**: Show different results based on game mode (score vs time).
 
-#### Phase 8: Fix Play Again and Edge Cases 🔧
-**Status**: Not Started
+#### Phase 8: Fix Play Again and Edge Cases ✅
+**Status**: Completed
 **File**: `app/game.tsx`
 **Objective**: Ensure Play Again respects mode/settings, handle app backgrounding and edge cases.
 

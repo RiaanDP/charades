@@ -6,7 +6,7 @@ import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { AppState, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function GameScreen() {
   useEffect(() => {
@@ -49,6 +49,7 @@ function GameContent() {
   const [flashColor, setFlashColor] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number | null>(3);
   const [gameStarted, setGameStarted] = useState(false);
+  const [isAppActive, setIsAppActive] = useState(true);
 
   // Timer state
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null); // Time Attack mode
@@ -64,14 +65,31 @@ function GameContent() {
   useEffect(() => {
     if (categoryId) {
       const categoryCards = getCardsByCategory(categoryId);
+      if (categoryCards.length === 0) {
+        // Invalid category or no cards available
+        return;
+      }
       const shuffled = shuffleCards(categoryCards);
-      setCards(shuffled.slice(0, gameDeckSize));
+      // Clamp deck size to available cards
+      const actualDeckSize = Math.min(gameDeckSize, categoryCards.length);
+      setCards(shuffled.slice(0, actualDeckSize));
     }
   }, [categoryId, gameDeckSize]);
 
+  // Handle app state changes (pause game when backgrounded)
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      setIsAppActive(nextAppState === 'active');
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   // Countdown timer
   useEffect(() => {
-    if (countdown === null) return;
+    if (countdown === null || !isAppActive) return;
 
     if (countdown > 0) {
       const timer = setTimeout(() => {
@@ -89,11 +107,11 @@ function GameContent() {
         setElapsedTime(0);
       }
     }
-  }, [countdown, gameMode, gameTimeLimit]);
+  }, [countdown, gameMode, gameTimeLimit, isAppActive]);
 
   // Game timer (Time Attack: countdown, Speed Run: stopwatch)
   useEffect(() => {
-    if (!gameStarted || gameOver) return;
+    if (!gameStarted || gameOver || !isAppActive) return;
 
     const timer = setInterval(() => {
       if (gameMode === 'time-attack') {
@@ -119,7 +137,7 @@ function GameContent() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [gameStarted, gameOver, gameMode]);
+  }, [gameStarted, gameOver, gameMode, isAppActive]);
 
   // Helper function to format time as M:SS
   const formatTime = (seconds: number): string => {
@@ -153,7 +171,7 @@ function GameContent() {
 
   // Accelerometer tilt detection
   useEffect(() => {
-    if (gameOver || !gameStarted) return;
+    if (gameOver || !gameStarted || !isAppActive) return;
 
     const accelerometer = getAccelerometer();
     accelerometer.setUpdateInterval(100);
@@ -202,7 +220,7 @@ function GameContent() {
     });
 
     return () => subscription.remove();
-  }, [currentCardIndex, score, cards.length, gameOver, gameStarted, gameMode, handleCorrect, handleSkip]);
+  }, [currentCardIndex, score, cards.length, gameOver, gameStarted, gameMode, isAppActive, handleCorrect, handleSkip]);
 
   const triggerFlash = (color: string) => {
     setFlashColor(color);
@@ -212,9 +230,15 @@ function GameContent() {
   };
 
   const handlePlayAgain = () => {
-    const categoryCards = getCardsByCategory(categoryId as string);
+    if (!categoryId) return;
+
+    const categoryCards = getCardsByCategory(categoryId);
+    if (categoryCards.length === 0) return;
+
     const shuffled = shuffleCards(categoryCards);
-    setCards(shuffled.slice(0, gameDeckSize));
+    // Clamp deck size to available cards
+    const actualDeckSize = Math.min(gameDeckSize, categoryCards.length);
+    setCards(shuffled.slice(0, actualDeckSize));
     setCurrentCardIndex(0);
     setScore(0);
     setCardsAttempted(0);
@@ -227,7 +251,7 @@ function GameContent() {
   };
 
   const handleBackToCategories = () => {
-    router.back();
+    router.push('/');
   };
 
   if (cards.length === 0) {
