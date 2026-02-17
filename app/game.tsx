@@ -45,6 +45,7 @@ function GameContent() {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [gameOverReason, setGameOverReason] = useState<'completed' | 'timeout' | null>(null);
   const [flashColor, setFlashColor] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number | null>(3);
   const [gameStarted, setGameStarted] = useState(false);
@@ -59,8 +60,6 @@ function GameContent() {
   const NEUTRAL_THRESHOLD = 0.3;
   const FLASH_DURATION = 300;
   const SPEED_RUN_TIMEOUT = 300; // 5 minutes in seconds
-
-  // TODO Phase 7: Update game over screen based on mode
 
   useEffect(() => {
     if (categoryId) {
@@ -101,6 +100,7 @@ function GameContent() {
         setTimeRemaining((prev) => {
           if (prev === null || prev <= 0) {
             setGameOver(true);
+            setGameOverReason('timeout');
             return 0;
           }
           return prev - 1;
@@ -111,6 +111,7 @@ function GameContent() {
           const newTime = prev + 1;
           if (newTime >= SPEED_RUN_TIMEOUT) {
             setGameOver(true);
+            setGameOverReason('timeout');
           }
           return newTime;
         });
@@ -137,6 +138,7 @@ function GameContent() {
       setCurrentCardIndex(currentCardIndex + 1);
     } else {
       setGameOver(true);
+      setGameOverReason('completed');
     }
   }, [currentCardIndex, cards.length, gameMode]);
 
@@ -219,6 +221,7 @@ function GameContent() {
     setTimeRemaining(null);
     setElapsedTime(0);
     setGameOver(false);
+    setGameOverReason(null);
     setGameStarted(false);
     setCountdown(3);
   };
@@ -239,18 +242,51 @@ function GameContent() {
     return (
       <ThemedView style={styles.container}>
         <View style={styles.gameOverContainer}>
+          {/* Title */}
           <ThemedText type="title" style={styles.gameOverTitle}>
-            Game Over!
+            {gameMode === 'time-attack'
+              ? "Time's Up!"
+              : gameOverReason === 'completed'
+              ? "Finished!"
+              : "Time Limit Reached!"}
           </ThemedText>
+
+          {/* Score/Time Display */}
           <View style={styles.scoreContainer}>
-            <ThemedText style={styles.scoreLabel}>Your Score</ThemedText>
-            <ThemedText style={styles.finalScore}>
-              {score} / {cards.length}
-            </ThemedText>
-            <ThemedText style={styles.percentage}>
-              {Math.round((score / cards.length) * 100)}%
-            </ThemedText>
+            {gameMode === 'time-attack' ? (
+              // Time Attack: Show cards completed out of attempted
+              <>
+                <ThemedText style={styles.scoreLabel}>Cards Completed</ThemedText>
+                <ThemedText style={styles.finalScore}>
+                  {score} / {cardsAttempted}
+                </ThemedText>
+                <ThemedText style={styles.percentage}>
+                  {cardsAttempted > 0 ? Math.round((score / cardsAttempted) * 100) : 0}%
+                </ThemedText>
+              </>
+            ) : gameOverReason === 'completed' ? (
+              // Speed Run completed: Show time
+              <>
+                <ThemedText style={styles.scoreLabel}>Your Time</ThemedText>
+                <ThemedText style={styles.finalScore}>
+                  {formatTime(elapsedTime)}
+                </ThemedText>
+                <ThemedText style={styles.statsLabel}>
+                  {cards.length} cards
+                </ThemedText>
+              </>
+            ) : (
+              // Speed Run timeout: Show cards completed
+              <>
+                <ThemedText style={styles.scoreLabel}>Cards Completed</ThemedText>
+                <ThemedText style={styles.finalScore}>
+                  {score} / {cards.length}
+                </ThemedText>
+              </>
+            )}
           </View>
+
+          {/* Buttons */}
           <View style={styles.gameOverButtons}>
             <TouchableOpacity
               style={[styles.button, styles.playAgainButton]}
@@ -415,6 +451,10 @@ const styles = StyleSheet.create({
   },
   percentage: {
     fontSize: 32,
+    opacity: 0.7,
+  },
+  statsLabel: {
+    fontSize: 24,
     opacity: 0.7,
   },
   gameOverButtons: {

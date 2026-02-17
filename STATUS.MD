@@ -87,8 +87,8 @@ Adding two distinct game modes to the charades app:
 **File**: `app/game.tsx`
 **Objective**: Disable forward tilt (skip) gesture for Speed Run mode only.
 
-#### Phase 7: Implement Mode-Specific Game Over Screens 🏆
-**Status**: Not Started
+#### Phase 7: Implement Mode-Specific Game Over Screens ✅
+**Status**: Completed
 **File**: `app/game.tsx`
 **Objective**: Show different results based on game mode (score vs time).
 
