@@ -7,6 +7,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { SvgUri } from 'react-native-svg';
 
 export default function GameScreen() {
   useEffect(() => {
@@ -387,7 +388,24 @@ function GameContent() {
           styles.card,
           flashColor && { backgroundColor: flashColor }
         ]}>
-          <ThemedText style={styles.cardText} id="card-text">{currentCard.text}</ThemedText>
+          {currentCard.svgData ? (
+            // Side-by-side layout: Image on left, text on right
+            <View style={styles.cardContentRow}>
+              <View style={styles.imageContainer}>
+                <SvgUri uri={currentCard.svgData} width="100%" height="100%" />
+              </View>
+              <View style={styles.textContainer}>
+                <ThemedText style={styles.cardText} id="card-text">
+                  {currentCard.text}
+                </ThemedText>
+              </View>
+            </View>
+          ) : (
+            // Text-only layout for cards without images
+            <ThemedText style={styles.cardText} id="card-text">
+              {currentCard.text}
+            </ThemedText>
+          )}
         </View>
       </View>
 
@@ -515,5 +533,26 @@ const styles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: '#8E8E93',
+  },
+  cardContentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20,
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  imageContainer: {
+    flex: 2,
+    aspectRatio: 1,
+    maxWidth: 180,
+    maxHeight: 180,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textContainer: {
+    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
