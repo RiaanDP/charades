@@ -6,29 +6,80 @@ A mobile charades game built with React Native and Expo. The app is being develo
 > **Note**: For current implementation status, progress tracking, and gameplay flow, see [STATUS.MD](./STATUS.MD)
 
 ## Project Description
-A mobile charades game where players act out words/phrases while teammates guess. Think "Heads Up" style gameplay with custom content creation.
+A mobile charades game where players act out words/phrases while teammates guess. The game features two distinct game modes that offer different challenges: Time Attack (maximize correct answers within a time limit) and Speed Run (complete all cards as quickly as possible).
 
 ## Core Features
 
 ### MVP (Version 1.0)
 
-1. Basic Gameplay
- - Display cards one at a time
- - Tilt phone up = correct (next card)
- - Tilt phone down = skip
- - Countdown timer (30s/60s/90s options)
- - Score tracking
+1. **Game Modes**
 
-2. Bundled Content
- - Starting with single category (Animals)
- - Will expand to more categories incrementally
- - 50+ cards per category
- - Text-only cards initially
+   **Time Attack Mode (Default)**
+   - Objective: Get as many correct answers as possible within a time limit
+   - Time limit options: 30s / 60s / 90s (default: 60s)
+   - Deck size options: 10 / 20 / 30 cards (default: 10)
+   - Tilt backward = correct (adds point, next card)
+   - Tilt forward = skip (no point, next card)
+   - Result: "X correct out of Y attempted"
 
-3. Game Setup
- - Select category
- - Choose timer duration
- - Add players
+   **Speed Run Mode**
+   - Objective: Complete all cards as fast as possible
+   - Deck size options: 5 / 10 / 15 cards (default: 10)
+   - Maximum time limit: 5 minutes (timeout)
+   - Tilt backward = correct (next card)
+   - No skipping allowed (tilt forward disabled)
+   - Result: Total time elapsed (e.g., "1:23.45") or "Timeout - X cards completed"
+
+2. **Basic Gameplay**
+   - Display cards one at a time
+   - Phone held vertically in landscape mode against forehead (Heads Up style)
+   - Accelerometer-based tilt gestures
+   - Visual feedback (green flash = correct, orange flash = skip)
+   - Haptic feedback for gesture confirmation
+   - 3-second countdown before game starts
+   - Score tracking
+
+3. **Bundled Content**
+   - Starting with single category (Animals)
+   - Will expand to more categories incrementally
+   - 50+ cards per category
+   - Text-only cards initially
+
+4. **Game Setup**
+   - Select category
+   - Choose game mode (Time Attack / Speed Run)
+   - Configure mode settings (time limit and/or deck size)
+   - Setup screen prepopulated with defaults
+
+## Game Flow
+
+1. **Category Selection** (Portrait)
+   - User selects a category (e.g., Animals)
+
+2. **Game Setup Screen** (Portrait)
+   - Mode selection: Time Attack or Speed Run
+   - Settings configuration based on selected mode:
+     - Time Attack: Time limit (30s/60s/90s) + Deck size (10/20/30)
+     - Speed Run: Deck size (5/10/15)
+   - Settings prepopulated with defaults
+   - User can customize or proceed with defaults
+
+3. **Countdown** (Landscape)
+   - Screen rotates to landscape
+   - 3-second countdown (3... 2... 1...)
+   - Gives players time to position phone against forehead
+
+4. **Gameplay** (Landscape)
+   - Cards displayed one at a time
+   - Tilt gestures to interact with cards
+   - Visual and haptic feedback
+   - Timer/progress tracking based on mode
+
+5. **Game Over Screen** (Landscape)
+   - Results displayed based on mode:
+     - Time Attack: "X correct out of Y attempted" + percentage
+     - Speed Run: Total time or timeout message
+   - Options: "Play Again" or "Back to Categories"
 
 ## Key Implementation Details
 
@@ -77,6 +128,7 @@ The phone is held vertically in landscape mode against the player's forehead wit
 charades/
 ├── app/                      # Expo Router screens
 │   ├── index.tsx            # Category selection screen (landing page)
+│   ├── setup.tsx            # Game setup screen (mode + settings)
 │   ├── game.tsx             # Gameplay screen with card display
 │   └── _layout.tsx          # Root layout with stack navigation
 ├── components/              # Reusable components
@@ -85,6 +137,7 @@ charades/
 ├── constants/               # App constants
 │   ├── categories.ts        # Category definitions
 │   ├── cards.ts             # Card data and utilities (50 animals)
+│   ├── game-modes.ts        # Game mode definitions and settings
 │   └── theme.ts            # Theme configuration
 └── hooks/                  # Custom React hooks
     └── use-*.ts            # Theme and color scheme hooks
