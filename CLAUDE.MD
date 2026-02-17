@@ -86,12 +86,13 @@ A mobile charades game where players act out words/phrases while teammates guess
 
 ### Accelerometer Gestures (Heads Up Style)
 The phone is held vertically in landscape mode against the player's forehead with the screen facing outward:
-- **Tilt backward** (top edge away from face, z > 0.7) = Mark correct, show next card
-- **Tilt forward** (top edge toward face, z < -0.7) = Skip card
+- **Tilt backward** (top edge away from face, z > 0.5) = Mark correct, show next card
+- **Tilt forward** (top edge toward face, z < -0.5) = Skip card (Time Attack only)
 - **Neutral position reset**: User must return phone to upright position (|z| < 0.3) before next gesture is recognized
+- **Gesture cooldown**: 2-second delay between gestures to prevent accidental triggers during phone readjustment
 - Uses z-axis of accelerometer for tilt detection
 - When held vertical against forehead: z ≈ 0
-- State machine approach prevents accidental multiple triggers without time-based debouncing
+- Combined state machine + time-based cooldown approach for reliable gesture recognition
 
 ### Countdown Timer
 - 3-second countdown (3, 2, 1) before game starts
@@ -182,8 +183,9 @@ interface Card {
 - Score tracking counts only tilt backward gestures (correct), not tilt forward (skip)
 - Accelerometer updates every 100ms for responsive tilt detection
 - Accelerometer disabled during countdown to prevent accidental triggers
-- Gesture recognition uses state machine: neutral → tilted → back to neutral (no time-based debouncing)
+- Gesture recognition uses state machine + cooldown: neutral → tilted → back to neutral + 2-second delay
 - Thresholds: Neutral zone |z| < 0.3, Action triggers at |z| > 0.5
+- 2-second cooldown between gestures prevents accidental triggers during phone readjustment
 - Visual flash (300ms) and haptic feedback provide immediate gesture confirmation
 - Immersive mode configured in root layout (_layout.tsx)
 - Theme system (ThemedView, ThemedText) provides dark/light mode support
