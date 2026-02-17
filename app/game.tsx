@@ -7,7 +7,6 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Image } from 'expo-image';
 
 export default function GameScreen() {
   useEffect(() => {
@@ -388,28 +387,10 @@ function GameContent() {
           styles.card,
           flashColor && { backgroundColor: flashColor }
         ]}>
-          {currentCard.svgData ? (
-            // Side-by-side layout: Image on left, text on right
-            <View style={styles.cardContentRow}>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={{ uri: currentCard.svgData }}
-                  style={{ width: '100%', height: '100%' }}
-                  contentFit="contain"
-                />
-              </View>
-              <View style={styles.textContainer}>
-                <ThemedText style={styles.cardText} id="card-text">
-                  {currentCard.text}
-                </ThemedText>
-              </View>
-            </View>
-          ) : (
-            // Text-only layout for cards without images
-            <ThemedText style={styles.cardText} id="card-text">
-              {currentCard.text}
-            </ThemedText>
-          )}
+          {/* Text-only layout - image rendering disabled for now */}
+          <ThemedText style={styles.cardText} id="card-text">
+            {currentCard.text}
+          </ThemedText>
         </View>
       </View>
 
