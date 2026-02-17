@@ -41,10 +41,46 @@ The app now has a fully functional "Heads Up" style gameplay:
 - ✅ Two Game Modes Feature (8-phase incremental implementation)
 
 ### In Progress
-- None
+- 🚧 Family Category (250 cards for ages 5+)
 
 ### Todo
-- Additional categories
+- Additional categories (Movies, Sports, Occupations, etc.)
+
+---
+
+## Family Category Implementation Plan
+
+### Overview
+Adding a new "Family" category with 250 AI-generated cards suitable for players aged 5 and up. Cards will be mostly objects (70-80%) with some actions (20-30%), appropriate for family gameplay with young children.
+
+### Implementation Steps
+
+#### Step 1: Generate 250 Family-Friendly Cards 🔄
+**Status**: Not Started
+**Objective**: Use AI to generate 250 unique cards following content guidelines for ages 5+
+**Details**:
+- 175-200 objects (household items, toys, vehicles, food, nature, clothing)
+- 50-75 actions (daily activities, play activities, emotions, movements)
+- Simple, one or two words maximum
+- No violence, weapons, or scary content
+
+#### Step 2: Update Category Definition 📋
+**Status**: Not Started
+**File**: `constants/categories.ts`
+**Objective**: Add Family category to CATEGORIES array with metadata
+
+#### Step 3: Add Family Cards and Update Functions 🃏
+**Status**: Not Started
+**File**: `constants/cards.ts`
+**Objective**: Add FAMILY_CARDS array and update getCardsByCategory() function
+
+#### Step 4: Add E2E Tests 🧪
+**Status**: Not Started
+**File**: `e2e/app.spec.ts`
+**Objective**: Add 3 new tests for Family category functionality
+
+### Full Plan Document
+See `/home/riaan/.claude/plans/groovy-tumbling-giraffe.md` for detailed implementation specifications.
 
 ---
 
