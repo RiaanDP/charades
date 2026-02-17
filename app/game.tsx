@@ -37,10 +37,8 @@ function GameContent() {
   const router = useRouter();
 
   // Parse game parameters with fallbacks for backward compatibility
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const gameMode = (mode as 'time-attack' | 'speed-run') || 'time-attack';
   const gameDeckSize = deckSize ? parseInt(deckSize, 10) : 10;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const gameTimeLimit = timeLimit ? parseInt(timeLimit, 10) : 60;
 
   const [cards, setCards] = useState<Card[]>([]);
@@ -51,13 +49,17 @@ function GameContent() {
   const [countdown, setCountdown] = useState<number | null>(3);
   const [gameStarted, setGameStarted] = useState(false);
 
+  // Timer state
+  const [timeRemaining, setTimeRemaining] = useState<number | null>(null); // Time Attack mode
+  const [elapsedTime, setElapsedTime] = useState<number>(0); // Speed Run mode
+  const [cardsAttempted, setCardsAttempted] = useState(0); // Time Attack tracking
+
   const isInNeutral = useRef(true);
   const TILT_THRESHOLD = 0.5;
   const NEUTRAL_THRESHOLD = 0.3;
   const FLASH_DURATION = 300;
+  const SPEED_RUN_TIMEOUT = 300; // 5 minutes in seconds
 
-  // TODO Phase 5: Add timer state for Time Attack mode
-  // TODO Phase 5: Add stopwatch state for Speed Run mode
   // TODO Phase 6: Disable skip gesture for Speed Run mode
   // TODO Phase 7: Update game over screen based on mode
 
@@ -82,16 +84,62 @@ function GameContent() {
       // Countdown finished
       setGameStarted(true);
       setCountdown(null);
+      // Initialize timer based on game mode
+      if (gameMode === 'time-attack') {
+        setTimeRemaining(gameTimeLimit);
+      } else {
+        setElapsedTime(0);
+      }
     }
-  }, [countdown]);
+  }, [countdown, gameMode, gameTimeLimit]);
 
-    const moveToNextCard = useCallback(() => {
+  // Game timer (Time Attack: countdown, Speed Run: stopwatch)
+  useEffect(() => {
+    if (!gameStarted || gameOver) return;
+
+    const timer = setInterval(() => {
+      if (gameMode === 'time-attack') {
+        setTimeRemaining((prev) => {
+          if (prev === null || prev <= 0) {
+            setGameOver(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      } else {
+        // Speed Run mode
+        setElapsedTime((prev) => {
+          const newTime = prev + 1;
+          if (newTime >= SPEED_RUN_TIMEOUT) {
+            setGameOver(true);
+          }
+          return newTime;
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [gameStarted, gameOver, gameMode]);
+
+  // Helper function to format time as M:SS
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const moveToNextCard = useCallback(() => {
+    // Track cards attempted for Time Attack mode
+    if (gameMode === 'time-attack') {
+      setCardsAttempted((prev) => prev + 1);
+    }
+
     if (currentCardIndex < cards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
     } else {
       setGameOver(true);
     }
-  }, [currentCardIndex, cards.length]);
+  }, [currentCardIndex, cards.length, gameMode]);
 
   const handleCorrect = useCallback(() => {
     setScore(score + 1);
@@ -165,6 +213,9 @@ function GameContent() {
     setCards(shuffled.slice(0, gameDeckSize));
     setCurrentCardIndex(0);
     setScore(0);
+    setCardsAttempted(0);
+    setTimeRemaining(null);
+    setElapsedTime(0);
     setGameOver(false);
     setGameStarted(false);
     setCountdown(3);
@@ -233,10 +284,16 @@ function GameContent() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <ThemedText style={styles.cardCounter}>
-          {currentCardIndex + 1} / {cards.length}
+        <ThemedText style={styles.timerText}>
+          {gameMode === 'time-attack' && timeRemaining !== null
+            ? formatTime(timeRemaining)
+            : formatTime(elapsedTime)}
         </ThemedText>
-        <ThemedText style={styles.scoreText}>Score: {score}</ThemedText>
+        <ThemedText style={styles.cardCounter}>
+          {gameMode === 'time-attack'
+            ? `${cardsAttempted} attempted`
+            : `${currentCardIndex + 1} / ${cards.length}`}
+        </ThemedText>
       </View>
 
       <View style={styles.cardContainer}>
@@ -265,11 +322,11 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     paddingHorizontal: 10,
   },
-  cardCounter: {
-    fontSize: 18,
-    fontWeight: '600',
+  timerText: {
+    fontSize: 20,
+    fontWeight: '700',
   },
-  scoreText: {
+  cardCounter: {
     fontSize: 18,
     fontWeight: '600',
   },

@@ -152,9 +152,9 @@ test.describe('Charades App - Game Flow', () => {
     // Wait for countdown to finish (3 seconds + buffer)
     await page.waitForTimeout(4000);
 
-    // After countdown, should show card counter and score
-    await expect(page.getByText(/\d+ \/ 10/)).toBeVisible(); // Card counter: "1 / 10"
-    await expect(page.getByText(/Score: \d+/)).toBeVisible(); // Score: "Score: 0"
+    // After countdown, should show timer and cards attempted (Time Attack mode default)
+    await expect(page.getByText(/\d+:\d+/)).toBeVisible(); // Timer showing M:SS format
+    await expect(page.getByText(/\d+ attempted/)).toBeVisible(); // Cards attempted counter
 
     // Should show a card with text content (any animal from the 50-card deck)
     // Check that there's visible text in the card area (at least 2 characters)
