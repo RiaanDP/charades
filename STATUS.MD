@@ -72,8 +72,8 @@ Adding two distinct game modes to the charades app:
 **Objective**: Connect category selection → setup → game navigation flow with parameter passing.
 **Note**: 8/9 e2e tests pass. One test for Speed Run mode switching is flaky in Playwright but functionality works.
 
-#### Phase 4: Update Game to Accept New Parameters 🎮
-**Status**: Not Started
+#### Phase 4: Update Game to Accept New Parameters ✅
+**Status**: Completed
 **File**: `app/game.tsx`
 **Objective**: Parse mode, timeLimit, deckSize from URL params with backward compatibility.
 

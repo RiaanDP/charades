@@ -28,8 +28,20 @@ export default function GameScreen() {
 }
 
 function GameContent() {
-  const { categoryId } = useLocalSearchParams<{ categoryId: string }>();
+  const { categoryId, mode, timeLimit, deckSize } = useLocalSearchParams<{
+    categoryId: string;
+    mode?: string;
+    timeLimit?: string;
+    deckSize?: string;
+  }>();
   const router = useRouter();
+
+  // Parse game parameters with fallbacks for backward compatibility
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const gameMode = (mode as 'time-attack' | 'speed-run') || 'time-attack';
+  const gameDeckSize = deckSize ? parseInt(deckSize, 10) : 10;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const gameTimeLimit = timeLimit ? parseInt(timeLimit, 10) : 60;
 
   const [cards, setCards] = useState<Card[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -44,13 +56,18 @@ function GameContent() {
   const NEUTRAL_THRESHOLD = 0.3;
   const FLASH_DURATION = 300;
 
+  // TODO Phase 5: Add timer state for Time Attack mode
+  // TODO Phase 5: Add stopwatch state for Speed Run mode
+  // TODO Phase 6: Disable skip gesture for Speed Run mode
+  // TODO Phase 7: Update game over screen based on mode
+
   useEffect(() => {
     if (categoryId) {
       const categoryCards = getCardsByCategory(categoryId);
       const shuffled = shuffleCards(categoryCards);
-      setCards(shuffled.slice(0, 10));
+      setCards(shuffled.slice(0, gameDeckSize));
     }
-  }, [categoryId]);
+  }, [categoryId, gameDeckSize]);
 
   // Countdown timer
   useEffect(() => {
@@ -145,7 +162,7 @@ function GameContent() {
   const handlePlayAgain = () => {
     const categoryCards = getCardsByCategory(categoryId as string);
     const shuffled = shuffleCards(categoryCards);
-    setCards(shuffled.slice(0, 10));
+    setCards(shuffled.slice(0, gameDeckSize));
     setCurrentCardIndex(0);
     setScore(0);
     setGameOver(false);
