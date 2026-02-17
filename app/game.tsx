@@ -6,7 +6,7 @@ import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AppState, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { AppState, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function GameScreen() {
   useEffect(() => {
@@ -16,6 +16,18 @@ export default function GameScreen() {
     // Unlock orientation when component unmounts
     return () => {
       ScreenOrientation.unlockAsync();
+    };
+  }, []);
+
+  useEffect(() => {
+    // Disable hardware back button during gameplay
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // Return true to prevent default back behavior
+      return true;
+    });
+
+    return () => {
+      backHandler.remove();
     };
   }, []);
 
