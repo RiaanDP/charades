@@ -69,9 +69,11 @@ function GameContent() {
   const [cardsAttempted, setCardsAttempted] = useState(0); // Time Attack tracking
 
   const isInNeutral = useRef(true);
+  const lastGestureTime = useRef(0);
   const TILT_THRESHOLD = 0.5;
   const NEUTRAL_THRESHOLD = 0.3;
   const FLASH_DURATION = 300;
+  const GESTURE_COOLDOWN = 2000; // 2 seconds between gestures
   const SPEED_RUN_TIMEOUT = 300; // 5 minutes in seconds
 
   useEffect(() => {
@@ -197,10 +199,11 @@ function GameContent() {
       // Tilt BACKWARD (top edge tilts away from face): z becomes positive
       // Tilt FORWARD (top edge tilts toward face): z becomes negative
       //
-      // State machine approach:
+      // State machine approach with cooldown:
       // 1. User must be in neutral position (|z| < 0.3) before gesture is recognized
       // 2. Once tilted beyond threshold, action triggers
       // 3. User must return to neutral before next action can trigger
+      // 4. 2-second cooldown between gestures to prevent accidental triggers
 
       // Check if in neutral position
       if (Math.abs(z) < NEUTRAL_THRESHOLD) {
@@ -213,9 +216,16 @@ function GameContent() {
         return;
       }
 
+      // Check cooldown period (2 seconds since last gesture)
+      const currentTime = Date.now();
+      if (currentTime - lastGestureTime.current < GESTURE_COOLDOWN) {
+        return;
+      }
+
       if (z > TILT_THRESHOLD) {
         // Tilted backward (top edge away from face) - Mark correct
         isInNeutral.current = false;
+        lastGestureTime.current = currentTime;
         triggerFlash('#34C759'); // Green flash
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         handleCorrect();
@@ -223,6 +233,7 @@ function GameContent() {
         // Tilted forward (top edge toward face) - Skip (Time Attack only)
         if (gameMode === 'time-attack') {
           isInNeutral.current = false;
+          lastGestureTime.current = currentTime;
           triggerFlash('#FF9500'); // Orange flash
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
           handleSkip();
@@ -260,6 +271,7 @@ function GameContent() {
     setGameOverReason(null);
     setGameStarted(false);
     setCountdown(3);
+    lastGestureTime.current = 0;
   };
 
   const handleBackToCategories = () => {
