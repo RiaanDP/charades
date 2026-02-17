@@ -57,9 +57,6 @@ test.describe('Charades App - Setup Screen', () => {
     // Should show deck size options for Speed Run
     await expect(page.getByText('Deck Size')).toBeVisible();
 
-    // Should show info text about 5-minute timeout
-    await expect(page.getByText(/Maximum time: 5 minutes/)).toBeVisible();
-
     // Verify deck size options are present (5, 10, 15 cards for Speed Run)
     const deckOptions = page.getByText(/\d+ cards/);
     await expect(deckOptions.first()).toBeVisible();

@@ -191,13 +191,6 @@ export default function SetupScreen() {
                   ))}
                 </View>
               </View>
-
-              {/* Info Text */}
-              <View style={styles.infoBox}>
-                <ThemedText style={styles.infoText}>
-                  Complete all cards as fast as possible. Maximum time: 5 minutes.
-                </ThemedText>
-              </View>
             </>
           )}
         </View>
@@ -310,17 +303,6 @@ const styles = StyleSheet.create({
   },
   optionButtonTextSelected: {
     color: '#FFFFFF',
-  },
-  infoBox: {
-    backgroundColor: '#F2F2F7',
-    padding: 16,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  infoText: {
-    fontSize: 14,
-    opacity: 0.7,
-    textAlign: 'center',
   },
   buttonContainer: {
     gap: 12,
