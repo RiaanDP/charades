@@ -9,9 +9,14 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test:e2e": "maestro test .maestro/flows/",
-    "test:e2e:record": "maestro record",
-    "test:e2e:studio": "maestro studio"
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:device": "maestro test .maestro/flows/",
+    "test:e2e:device:record": "maestro record",
+    "test:e2e:device:studio": "maestro studio"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -44,10 +49,11 @@
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/react": "~19.1.0",
-    "typescript": "~5.9.2",
     "eslint": "^9.25.0",
-    "eslint-config-expo": "~10.0.0"
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
   },
   "private": true
 }
