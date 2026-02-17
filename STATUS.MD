@@ -61,8 +61,8 @@ Adding two distinct game modes to the charades app:
 **File**: `constants/game-modes.ts` (new)
 **Objective**: Create type-safe foundation with GameMode types, settings interfaces, defaults, and helper functions.
 
-#### Phase 2: Create Setup Screen UI (Non-functional) 📝
-**Status**: Not Started
+#### Phase 2: Create Setup Screen UI (Non-functional) ✅
+**Status**: Completed
 **Files**: `app/setup.tsx` (new), `app/_layout.tsx` (modify)
 **Objective**: Build complete setup screen UI with mode selector, settings panels, and navigation buttons.
 
