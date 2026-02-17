@@ -5,8 +5,8 @@
 The app now has a fully functional "Heads Up" style gameplay:
 - Category selection screen as the main landing page (portrait mode)
 - Two categories available:
-  - **Animals**: 50 animal cards
-  - **Family**: 250 family-friendly cards for ages 5+ (objects and actions)
+  - **Animals**: 50 animal cards (text-only)
+  - **Family**: 250 family-friendly cards with SVG images for ages 5+ (objects and actions)
 - 3-second countdown before gameplay begins
 - Gameplay screen with card display (10 cards per game, landscape mode)
 - Landscape orientation lock on game screen
@@ -42,6 +42,7 @@ The app now has a fully functional "Heads Up" style gameplay:
 - ✅ Optimized layout for landscape orientation
 - ✅ Two Game Modes Feature (8-phase incremental implementation)
 - ✅ Family Category (250 cards for ages 5+)
+- ✅ SVG Images for Family Category (250 AI-generated icons for non-readers)
 
 ### In Progress
 - None

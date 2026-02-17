@@ -41,10 +41,12 @@ A mobile charades game where players act out words/phrases while teammates guess
 
 3. **Bundled Content**
    - Two categories available:
-     - **Animals**: 50 animal cards
-     - **Family**: 250 family-friendly cards for ages 5+ (objects and actions)
+     - **Animals**: 50 animal cards (text-only)
+     - **Family**: 250 family-friendly cards for ages 5+ with SVG images
+       - Objects (72%): household items, toys, vehicles, food, nature, clothing
+       - Actions (28%): daily activities, play/movement, emotions, animal sounds
+       - Each card includes a simple white SVG icon for non-readers
    - Will expand to more categories incrementally
-   - Text-only cards
 
 4. **Game Setup**
    - Select category
@@ -124,6 +126,7 @@ The phone is held vertically in landscape mode against the player's forehead wit
 - **Sensors**: Expo Sensors (accelerometer for tilt detection)
 - **Haptics**: Expo Haptics (for tactile feedback)
 - **Navigation Bar**: Expo Navigation Bar (for immersive mode on Android)
+- **SVG Rendering**: React Native SVG (for inline SVG icons)
 
 ## Project Structure
 ```
@@ -163,6 +166,7 @@ interface Card {
   id: string;
   text: string;
   categoryId: string;
+  svgData?: string; // Optional inline SVG string for visual representation
 }
 ```
 
