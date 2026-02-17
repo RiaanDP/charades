@@ -1,10 +1,10 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card, getCardsByCategory, shuffleCards } from '@/constants/cards';
+import { getAccelerometer } from '@/utils/accelerometer-mock';
 import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { Accelerometer } from 'expo-sensors';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -89,9 +89,10 @@ function GameContent() {
   useEffect(() => {
     if (gameOver || !gameStarted) return;
 
-    Accelerometer.setUpdateInterval(100);
+    const accelerometer = getAccelerometer();
+    accelerometer.setUpdateInterval(100);
 
-    const subscription = Accelerometer.addListener(({ x, y, z }) => {
+    const subscription = accelerometer.addListener(({ x, y, z }) => {
       // Phone held vertically in landscape mode against forehead:
       // - Long edge is horizontal (top and bottom)
       // - Screen faces outward
@@ -226,7 +227,7 @@ function GameContent() {
           styles.card,
           flashColor && { backgroundColor: flashColor }
         ]}>
-          <ThemedText style={styles.cardText}>{currentCard.text}</ThemedText>
+          <ThemedText style={styles.cardText} id="card-text">{currentCard.text}</ThemedText>
         </View>
       </View>
 

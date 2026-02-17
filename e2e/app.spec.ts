@@ -59,9 +59,10 @@ test.describe('Charades App - Game Flow', () => {
     await expect(page.getByText(/\d+ \/ 10/)).toBeVisible(); // Card counter: "1 / 10"
     await expect(page.getByText(/Score: \d+/)).toBeVisible(); // Score: "Score: 0"
 
-    // Should show a card with an animal name
-    // Check for any of the possible animal cards
-    const hasAnimalCard = await page.locator('text=/Lion|Elephant|Giraffe|Monkey|Penguin/i').isVisible();
-    expect(hasAnimalCard).toBe(true);
+    // Should show a card with text content (any animal from the 50-card deck)
+    // Check that there's visible text in the card area (at least 2 characters)
+    const cardText = await page.locator('#card-text').textContent();
+    expect(cardText).toBeTruthy();
+    expect(cardText!.length).toBeGreaterThan(1);
   });
 });
