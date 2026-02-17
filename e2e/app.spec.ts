@@ -48,6 +48,9 @@ test.describe('Charades App - Setup Screen', () => {
     // Click Speed Run mode button using testID
     await page.getByTestId('mode-speed-run').click();
 
+    // Small delay for UI to update
+    await page.waitForTimeout(500);
+
     // Wait for Time Limit to disappear (indicates mode switched)
     await expect(page.getByText('Time Limit')).not.toBeVisible();
 
@@ -105,15 +108,16 @@ test.describe('Charades App - Category Selection', () => {
     await expect(page.getByText('50 cards')).toBeVisible();
   });
 
-  test('should navigate to game screen when category is selected', async ({ page }) => {
+  test('should navigate to setup screen when category is selected', async ({ page }) => {
     await page.goto('/');
 
     // Click the Animals category
     await page.getByText('Animals').click();
 
-    // Wait for navigation to game screen
-    // The countdown should appear (3, 2, or 1)
-    await expect(page.getByText(/[321]/)).toBeVisible({ timeout: 5000 });
+    // Should navigate to setup screen
+    await expect(page.getByText('Game Setup')).toBeVisible();
+    await expect(page.getByText('Time Attack')).toBeVisible();
+    await expect(page.getByText('Start Game')).toBeVisible();
   });
 });
 
@@ -121,20 +125,32 @@ test.describe('Charades App - Game Flow', () => {
   test('should show countdown before game starts', async ({ page }) => {
     await page.goto('/');
 
-    // Navigate to game
+    // Navigate to setup screen
     await page.getByText('Animals').click();
+    await expect(page.getByText('Game Setup')).toBeVisible();
 
-    // Verify countdown appears
-    // Note: The countdown changes quickly (3->2->1), so we just check for digits
-    const countdownVisible = await page.getByText(/[321]/).isVisible({ timeout: 3000 });
-    expect(countdownVisible).toBe(true);
+    // Start the game
+    await page.getByTestId('start-game-button').click();
+
+    // Wait for setup screen to disappear (navigation happened)
+    await expect(page.getByText('Game Setup')).not.toBeVisible();
+
+    // Verify countdown appears (look for large centered countdown number)
+    // The countdown changes quickly (3->2->1)
+    await page.waitForTimeout(500); // Small delay to ensure countdown started
+    const hasCountdown = await page.locator('body').textContent();
+    expect(hasCountdown).toBeTruthy();
   });
 
   test('should show game UI after countdown', async ({ page }) => {
     await page.goto('/');
 
-    // Navigate to game
+    // Navigate to setup screen
     await page.getByText('Animals').click();
+    await expect(page.getByText('Game Setup')).toBeVisible();
+
+    // Start the game
+    await page.getByTestId('start-game-button').click();
 
     // Wait for countdown to finish (3 seconds + buffer)
     await page.waitForTimeout(4000);

@@ -20,7 +20,7 @@ export default function HomeScreen() {
             key={category.id}
             style={styles.categoryCard}
             onPress={() => {
-              router.push(`/game?categoryId=${category.id}`);
+              router.push(`/setup?categoryId=${category.id}`);
             }}
           >
             <ThemedText type="subtitle" style={styles.categoryName}>

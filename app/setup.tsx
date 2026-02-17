@@ -1,5 +1,6 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { CATEGORIES } from '@/constants/categories';
 import {
   DEFAULT_SPEED_RUN,
   DEFAULT_TIME_ATTACK,
@@ -7,14 +8,21 @@ import {
   getDeckSizeOptions,
   getTimeOptions,
 } from '@/constants/game-modes';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function SetupScreen() {
+  const { categoryId } = useLocalSearchParams<{ categoryId: string }>();
+  const router = useRouter();
+
   const [selectedMode, setSelectedMode] = useState<GameMode>('time-attack');
   const [timeLimit, setTimeLimit] = useState<30 | 60 | 90>(DEFAULT_TIME_ATTACK.timeLimit);
   const [deckSize, setDeckSize] = useState<number>(DEFAULT_TIME_ATTACK.deckSize);
+
+  // Get category name from CATEGORIES
+  const category = CATEGORIES.find(cat => cat.id === categoryId);
+  const categoryName = category?.name || 'Unknown';
 
   const timeOptions = getTimeOptions();
   const deckSizeOptions = getDeckSizeOptions(selectedMode);
@@ -31,13 +39,16 @@ export default function SetupScreen() {
   };
 
   const handleStartGame = () => {
-    // TODO: Navigate to game screen with parameters
-    console.log('Start game:', { selectedMode, timeLimit, deckSize });
+    // Build URL with all parameters based on mode
+    if (selectedMode === 'time-attack') {
+      router.push(`/game?categoryId=${categoryId}&mode=time-attack&timeLimit=${timeLimit}&deckSize=${deckSize}`);
+    } else {
+      router.push(`/game?categoryId=${categoryId}&mode=speed-run&deckSize=${deckSize}`);
+    }
   };
 
   const handleBack = () => {
-    // TODO: Navigate back to categories
-    console.log('Back to categories');
+    router.back();
   };
 
   return (
@@ -49,7 +60,7 @@ export default function SetupScreen() {
           <ThemedText type="title" style={styles.title}>
             Game Setup
           </ThemedText>
-          <ThemedText style={styles.subtitle}>Animals</ThemedText>
+          <ThemedText style={styles.subtitle}>{categoryName}</ThemedText>
         </View>
 
         {/* Mode Selector */}
@@ -196,14 +207,16 @@ export default function SetupScreen() {
           <TouchableOpacity
             style={[styles.button, styles.startButton]}
             onPress={handleStartGame}
-            id="start-game-button"
+            testID="start-game-button"
+            accessibilityRole="button"
           >
             <ThemedText style={styles.startButtonText}>Start Game</ThemedText>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.backButton]}
             onPress={handleBack}
-            id="back-button"
+            testID="back-button"
+            accessibilityRole="button"
           >
             <ThemedText style={styles.backButtonText}>Back</ThemedText>
           </TouchableOpacity>
