@@ -7,7 +7,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { SvgUri } from 'react-native-svg';
+import { Image } from 'expo-image';
 
 export default function GameScreen() {
   useEffect(() => {
@@ -392,7 +392,11 @@ function GameContent() {
             // Side-by-side layout: Image on left, text on right
             <View style={styles.cardContentRow}>
               <View style={styles.imageContainer}>
-                <SvgUri uri={currentCard.svgData} width="100%" height="100%" />
+                <Image
+                  source={{ uri: currentCard.svgData }}
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <View style={styles.textContainer}>
                 <ThemedText style={styles.cardText} id="card-text">
