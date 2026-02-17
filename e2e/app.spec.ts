@@ -100,9 +100,9 @@ test.describe('Charades App - Category Selection', () => {
     await expect(page.getByText('Choose a category to start playing')).toBeVisible();
 
     // Verify the Animals category card is present
-    await expect(page.getByText('Animals')).toBeVisible();
+    await expect(page.getByText('Animals', { exact: true })).toBeVisible();
     await expect(page.getByText('Creatures from around the world')).toBeVisible();
-    await expect(page.getByText('50 cards')).toBeVisible();
+    await expect(page.getByText('50 cards', { exact: true })).toBeVisible();
   });
 
   test('should navigate to setup screen when category is selected', async ({ page }) => {
@@ -158,6 +158,49 @@ test.describe('Charades App - Game Flow', () => {
 
     // Should show a card with text content (any animal from the 50-card deck)
     // Check that there's visible text in the card area (at least 2 characters)
+    const cardText = await page.locator('#card-text').textContent();
+    expect(cardText).toBeTruthy();
+    expect(cardText!.length).toBeGreaterThan(1);
+  });
+});
+
+test.describe('Charades App - Family Category', () => {
+  test('should show Family category with 250 cards on home screen', async ({ page }) => {
+    await page.goto('/');
+
+    // Verify Family category is visible
+    await expect(page.getByText('Family', { exact: true })).toBeVisible();
+    await expect(page.getByText('Fun for the whole family - ages 5 and up')).toBeVisible();
+    await expect(page.getByText('250 cards', { exact: true })).toBeVisible();
+  });
+
+  test('should navigate to setup screen when Family category is selected', async ({ page }) => {
+    await page.goto('/');
+
+    // Click the Family category
+    await page.getByText('Family', { exact: true }).click();
+
+    // Should navigate to setup screen with game mode options
+    await expect(page.getByText('Game Setup')).toBeVisible();
+    await expect(page.getByText('Time Attack')).toBeVisible();
+    await expect(page.getByText('Speed Run')).toBeVisible();
+  });
+
+  test('should start game with Family category cards', async ({ page }) => {
+    await page.goto('/');
+
+    // Navigate through to game
+    await page.getByText('Family', { exact: true }).click();
+    await page.getByTestId('start-game-button').click();
+
+    // Wait for countdown to finish (3 seconds + buffer)
+    await page.waitForTimeout(4000);
+
+    // Verify game UI shows with a card
+    await expect(page.getByText(/\d+:\d+/)).toBeVisible(); // Timer
+    await expect(page.getByText(/\d+ attempted/)).toBeVisible(); // Counter
+
+    // Verify there's card text displayed
     const cardText = await page.locator('#card-text').textContent();
     expect(cardText).toBeTruthy();
     expect(cardText!.length).toBeGreaterThan(1);
