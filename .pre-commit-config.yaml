@@ -19,3 +19,11 @@ repos:
         language: system
         files: ^package(-lock)?\.json$
         pass_filenames: false
+  - repo: local
+    hooks:
+      - id: check-sensitive-files
+        name: Check for sensitive files
+        entry: bash ./cd/scripts/check-sensitive-files.sh
+        language: system
+        always_run: true
+        pass_filenames: false
